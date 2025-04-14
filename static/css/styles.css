@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #2f2f2f;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header, nav {
+    background-color: #1f1f1f;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #444;
+}
+
+nav a {
+    color: #e0e0e0;
+    margin-right: 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+main {
+    
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #3b3b3b;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    margin-top: 50px;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #1f1f1f;
+    color: #999;
+    margin-top: 2rem;
+    border-top: 1px solid #444;
+}
+
+/* FORMULARIO DE REGISTRO DE USUARIO */
+
+.registro-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #2a2a2a;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.registro-form-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+}
+
+.registro-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ccc;
+    font-weight: bold;
+}
+
+.registro-form input,
+.registro-form select,
+.registro-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1.2rem;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background-color: #444;
+    color: #e0e0e0;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.registro-form input:focus,
+.registro-form textarea:focus,
+.registro-form select:focus {
+    outline: none;
+    border-color: #007bff;
+    background-color: #555;
+}
+
+.registro-form button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.registro-form button:hover {
+    background-color: #0056b3;
+}
+
+.registro-form p {
+    text-align: center;
+    margin-top: 1rem;
+    color: #bbb;
+}
+
+.registro-form a {
+    color: #4da8ff;
+    text-decoration: none;
+}
+
+.registro-form a:hover {
+    text-decoration: underline;
+}

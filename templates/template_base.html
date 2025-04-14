@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title_page %}
+        <title>Foro</title>
+    {% endblock title_page %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    {% block navbar %}
+    <nav>
+        <a href="{% url "home" %}">Inicio</a>
+        <a href="/categorias/">Categorías</a>
+        <a href="/publicaciones/">Publicaciones</a>
+        <a href="{% url "login" %}">Iniciar sesión</a>
+    </nav>
+    {% endblock navbar %}
+
+    <!-- Cuerpo -->
+    <main>
+        {% block body %}
+        <p>oli</p>
+        {% endblock body %}
+    </main>
+
+    <!-- Footer -->
+    {% block footer %}
+    <footer>
+        <p>© 2025 - Foro - Jordán Espinoza</p>
+    </footer>
+    {% endblock footer %}
+
+</body>
+</html>

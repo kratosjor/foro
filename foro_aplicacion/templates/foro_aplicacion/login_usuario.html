@@ -1,0 +1,13 @@
+{% extends 'template_base.html' %}
+
+{% block body %}
+<div class="form-container">
+    <h2>Iniciar Sesión</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Entrar</button>
+    </form>
+    <p>¿No tienes una cuenta? <a href="{% url 'registro_usuario' %}">Regístrate aquí</a></p>
+</div>
+{% endblock %}
