@@ -56,8 +56,10 @@ ROOT_URLCONF = 'foro.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+        'DIRS': [
+            BASE_DIR / 'templates',  # Esto es importante para las plantillas globales
+        ],
+        'APP_DIRS': True,  # Esto permite que Django busque plantillas dentro de cada aplicación
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -68,6 +70,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'foro.wsgi.application'
 

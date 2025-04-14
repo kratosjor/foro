@@ -16,7 +16,7 @@
     {% block navbar %}
     <nav>
         <a href="{% url "home" %}">Inicio</a>
-        <a href="/categorias/">Categorías</a>
+        <a href="{% url "listar" %}">Categorías</a>
         <a href="/publicaciones/">Publicaciones</a>
         <a href="{% url "login" %}">Iniciar sesión</a>
     </nav>

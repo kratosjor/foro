@@ -1,84 +1,90 @@
+/* === ESTILOS GENERALES === */
 body {
     margin: 0;
     padding: 0;
-    background-color: #2f2f2f;
-    color: #e0e0e0;
+    background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
+    color: #333;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* === NAVBAR CON COLOR === */
 header, nav {
-    background-color: #1f1f1f;
+    background: linear-gradient(90deg, #7f7fd5, #86a8e7, #91eae4);
     padding: 1rem 2rem;
-    border-bottom: 1px solid #444;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 3px solid #c1d7f2;
 }
 
 nav a {
-    color: #e0e0e0;
+    color: #fff;
     margin-right: 20px;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+    transition: color 0.3s ease;
 }
 
 nav a:hover {
-    color: #ffffff;
+    color: #faff00;
     text-decoration: underline;
 }
 
+/* === CONTENIDO PRINCIPAL === */
 main {
-    
     padding: 2rem;
     max-width: 1000px;
-    margin: 0 auto;
-    background-color: #3b3b3b;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    margin-top: 50px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.08);
 }
 
+/* === FOOTER === */
 footer {
     text-align: center;
     padding: 1rem;
-    background-color: #1f1f1f;
-    color: #999;
+    background-color: #eceff1;
+    color: #444;
     margin-top: 2rem;
-    border-top: 1px solid #444;
+    border-top: 2px solid #ccc;
 }
 
-/* FORMULARIO DE REGISTRO DE USUARIO */
-
+/* === FORMULARIO === */
 .registro-form-container {
     max-width: 500px;
     margin: 0 auto;
-    background-color: #2a2a2a;
+    background-color: #ffffff;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .registro-form-container h2 {
     text-align: center;
     margin-bottom: 1.5rem;
-    color: #ffffff;
+    color: #4a4a4a;
 }
 
 .registro-form label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #ccc;
-    font-weight: bold;
+    color: #555;
+    font-weight: 600;
 }
 
 .registro-form input,
 .registro-form select,
 .registro-form textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 1.2rem;
-    border: 1px solid #555;
-    border-radius: 6px;
-    background-color: #444;
-    color: #e0e0e0;
-    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f5f9ff;
+    color: #333;
+    font-size: 15px;
     transition: all 0.3s ease;
 }
 
@@ -86,34 +92,36 @@ footer {
 .registro-form textarea:focus,
 .registro-form select:focus {
     outline: none;
-    border-color: #007bff;
-    background-color: #555;
+    border-color: #7f7fd5;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(127,127,213, 0.4);
 }
 
 .registro-form button {
     width: 100%;
-    background-color: #007bff;
+    background-color: #7f7fd5;
     color: white;
     border: none;
     padding: 12px;
     font-size: 16px;
-    border-radius: 6px;
+    font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .registro-form button:hover {
-    background-color: #0056b3;
+    background-color: #5c5cd4;
 }
 
 .registro-form p {
     text-align: center;
     margin-top: 1rem;
-    color: #bbb;
+    color: #777;
 }
 
 .registro-form a {
-    color: #4da8ff;
+    color: #5c5cd4;
     text-decoration: none;
 }
 

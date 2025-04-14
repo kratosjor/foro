@@ -1,0 +1,22 @@
+{% extends 'template_base.html' %}
+{% block title_page %}
+    <title>Categorías | Foro</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="titulo">Categorías del Foro</h1>
+    <div class="categoria-lista">
+        {% for categoria in object_list %}
+            <div class="categoria-card">
+                <h2 class="nombre">{{ categoria.nombre }}</h2>
+                <p class="descripcion">{{ categoria.descripcion|default:"Sin descripción" }}</p>
+                <p class="autor">Creada por: <strong>{{ categoria.usuario.username }}</strong></p>
+                <p class="fecha">Desde: {{ categoria.fecha_creacion|date:"d M Y" }}</p>
+            </div>
+        {% empty %}
+            <p class="sin-categorias">No hay categorías disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
