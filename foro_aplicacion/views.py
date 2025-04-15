@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import *
 from .forms import *
-from django.views.generic import CreateView, UpdateView, DetailView, ListView
+from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -75,12 +75,23 @@ class CategoriaCreateView(LoginRequiredMixin, CreateView):
     model = Categoria
     fields = ['nombre', 'descripcion']
     template_name = 'categorias/crear_categoria.html'
-    success_url = '/categorias/'
+    success_url = reverse_lazy('listar')
     
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         return super().form_valid(form)
+    
+######################
+# VISTA ELIMINAR CATEGORIA
+######################
 
+class CategoriaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Categoria
+    template_name = 'categorias/eliminar_categoria.html'
+        
+    def get_success_url(self):
+        return reverse_lazy('listar')
+    
 
 ######################
 # VISTA LISTA PUBLICACIONES
@@ -99,7 +110,7 @@ class PublicacionListView(ListView):
 class PublicacionDetailView(DetailView):
     model = Publicacion
     template_name = 'publicaciones/detalle.html'
-    
+
 ######################
 # VISTA crear publicacion
 ######################
@@ -108,11 +119,12 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
     model = Publicacion
     fields = ['titulo','cuerpo','categoria','etiquetas']
     template_name = 'publicaciones/crear.html'
-    success_url = '/publicaciones/'
+    success_url = reverse_lazy('publicaciones')
     
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         return super().form_valid(form)
+
 
 ######################
 # VISTA agregar comentario

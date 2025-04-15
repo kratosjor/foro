@@ -1,4 +1,5 @@
 {% extends 'template_base.html' %}
+
 {% block title_page %}
     <title>Categorías | Foro</title>
 {% endblock %}
@@ -13,13 +14,22 @@
                 <p class="descripcion">{{ categoria.descripcion|default:"Sin descripción" }}</p>
                 <p class="autor">Creada por: <strong>{{ categoria.usuario.username }}</strong></p>
                 <p class="fecha">Desde: {{ categoria.fecha_creacion|date:"d M Y" }}</p>
+
+                <a href="{% url "listar_publicaciones" %}">Publicaciones</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
             </div>
         {% empty %}
             <p class="sin-categorias">No hay categorías disponibles.</p>
         {% endfor %}
     </div>
-    {% if user.is_authenticated %}
-    <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
-    {% endif %}
+    <div class="crear-categoria">
+        {% if user.is_authenticated %}
+            <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+        {% endif %}
+    </div>
+    
 </div>
 {% endblock %}

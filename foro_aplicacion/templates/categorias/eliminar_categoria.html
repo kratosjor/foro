@@ -1,0 +1,19 @@
+{% extends 'template_base.html' %}
+{% block title_page %}
+    <title>Eliminar Categoría</title>
+{% endblock title_page %}
+
+{% block body %}
+<div class="delete-container">
+    <h2>¿Estás seguro que deseas eliminar esta categoría?</h2>
+    <p><strong>{{ object.nombre }}</strong></p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="delete-buttons">
+            <button type="submit" class="btn-delete">Sí, eliminar</button>
+            <a href="{% url 'listar' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock body %}

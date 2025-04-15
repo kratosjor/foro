@@ -227,3 +227,139 @@ body {
 .btn:hover {
     background-color: #005bb5;
 }
+/**ESTILOS PARA ELIMINAR CATEGORIA**/
+.delete-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 50px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.delete-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.delete-container p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.delete-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.btn-cancel {
+    background-color: #bdc3c7;
+    color: #2c3e50;
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #95a5a6;
+}
+/* === CATEGORÍAS - ESTILO DE TARJETAS === */
+.categoria-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.categoria-card {
+    background: #fefefe;
+    border-left: 6px solid #7f7fd5;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categoria-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.categoria-card .nombre {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.categoria-card .descripcion {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+}
+
+.categoria-card .autor,
+.categoria-card .fecha {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0.2rem 0;
+}
+
+.categoria-card a.btn {
+    margin-top: 1rem;
+    display: inline-block;
+    background-color: #e53935;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.categoria-card a.btn:hover {
+    background-color: #c62828;
+}
+.crear-categoria {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.crear-categoria .btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #7f7fd5, #86a8e7);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.crear-categoria .btn:hover {
+    background: linear-gradient(90deg, #5c5cd4, #7498e7);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
