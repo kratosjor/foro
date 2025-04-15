@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+from django.urls import reverse_lazy
 
 
 def home(request):
@@ -24,6 +24,9 @@ from django.contrib.auth.views import LogoutView
 class LoginUsuarioView(LoginView):
     template_name = 'foro_aplicacion/login_usuario.html'
     redirect_authenticated_user = True  # Redirige si ya está logueado
+
+    def get_success_url(self):
+        return reverse_lazy('home')
 
 
 ######################
@@ -42,7 +45,7 @@ class RegistroUsuarioView(CreateView):
 ######################
 
 class LogoutUsuarioView(LogoutView):
-    next_page = '/foro/'  # O la página de login
+    next_page = 'login'
 
 ######################
 # VISTA PARA UPTADE DE USUARIO

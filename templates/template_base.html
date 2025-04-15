@@ -19,8 +19,16 @@
         <a href="{% url "listar" %}">Categorías</a>
         <a href="/publicaciones/">Publicaciones</a>
         <a href="{% url "login" %}">Iniciar sesión</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Cerrar sesión</button>
+        </form>
+        
+    
     </nav>
     {% endblock navbar %}
+
+    
 
     <!-- Cuerpo -->
     <main>
