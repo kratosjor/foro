@@ -40,6 +40,35 @@ main {
     border-radius: 16px;
     box-shadow: 0 0 15px rgba(0,0,0,0.08);
 }
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-right form {
+    margin: 0;
+}
+
+.logout-button {
+    background-color: #ff5252;
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #d84315;
+}
 
 /* === FOOTER === */
 footer {

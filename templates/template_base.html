@@ -15,16 +15,23 @@
     <!-- Navbar -->
     {% block navbar %}
     <nav>
-        <a href="{% url "home" %}">Inicio</a>
-        <a href="{% url "listar" %}">Categorías</a>
-        <a href="/publicaciones/">Publicaciones</a>
-        <a href="{% url "login" %}">Iniciar sesión</a>
+        <div class="nav-left">
+            <a href="{% url 'home' %}">Inicio</a>
+            <a href="{% url 'listar' %}">Categorías</a>
+            <a href="/publicaciones/">Publicaciones</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+        </div>
+        
+        {% if user.is_authenticated %}
+    <div class="nav-right">
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit">Cerrar sesión</button>
+            <button type="submit" class="logout-button">Cerrar sesión</button>
         </form>
-        
-    
+    </div>
+{% endif %}
     </nav>
     {% endblock navbar %}
 
