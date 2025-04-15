@@ -74,7 +74,7 @@ class CategoriaListView(ListView):
 class CategoriaCreateView(LoginRequiredMixin, CreateView):
     model = Categoria
     fields = ['nombre', 'descripcion']
-    template_name = 'categorias/crear.html'
+    template_name = 'categorias/crear_categoria.html'
     success_url = '/categorias/'
     
     def form_valid(self, form):

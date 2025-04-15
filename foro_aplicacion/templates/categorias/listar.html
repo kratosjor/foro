@@ -18,5 +18,8 @@
             <p class="sin-categorias">No hay categorías disponibles.</p>
         {% endfor %}
     </div>
+    {% if user.is_authenticated %}
+    <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+    {% endif %}
 </div>
 {% endblock %}
