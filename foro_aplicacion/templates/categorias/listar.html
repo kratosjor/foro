@@ -11,13 +11,22 @@
         {% for categoria in object_list %}
             <div class="categoria-card">
                 <h2 class="nombre">{{ categoria.nombre }}</h2>
+                <a href="{% url 'crear_etiqueta'  %}">Crear Etiqueta</a>
+                <h3>Etiquetas:</h3>
+        <ul>
+            {% for etiqueta in etiquetas %}
+                <li>{{ etiqueta.nombre }}</li>
+            {% endfor %}
+        </ul>
                 <p class="descripcion">{{ categoria.descripcion|default:"Sin descripción" }}</p>
                 <p class="autor">Creada por: <strong>{{ categoria.usuario.username }}</strong></p>
                 <p class="fecha">Desde: {{ categoria.fecha_creacion|date:"d M Y" }}</p>
 
-                <a href="{% url "listar_publicaciones" %}">Publicaciones</a>
-
+                <div>
+                <a href="{% url "listar_publicaciones" %}" class="btn btn-danger">Publicaciones</a>
+                </div>
                 {% if user.is_authenticated %}
+                    
                     <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-danger">Eliminar</a>
                 {% endif %}
             </div>

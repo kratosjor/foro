@@ -1,0 +1,15 @@
+{% extends 'template_base.html' %}
+
+{% block title_page %}
+    <title>{{ publicacion.titulo }} | Foro</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="titulo">{{ publicacion.titulo }}</h1>
+    <p class="contenido">{{ publicacion.cuerpo }}</p>
+    <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
+    <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
+    <p class="fecha"><strong>Fecha de publicación:</strong> {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
+</div>
+{% endblock %}

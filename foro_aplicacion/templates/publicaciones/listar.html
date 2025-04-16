@@ -16,8 +16,9 @@
                 <p class="fecha">Publicado el: {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
                 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'editar_publicacion' publicacion.pk %}" class="btn btn-primary">Editar</a>
-                    <a href="{% url 'eliminar_publicacion' publicacion.pk %}" class="btn btn-danger">Eliminar</a>
+                    <a href="{% url 'detalle_publicacion' publicacion.pk %}" class="btn btn-danger">Ver Publicacion</a>
+                    <a href="" class="btn btn-primary">Editar</a>
+                    <a href="" class="btn btn-danger">Eliminar</a>
                 {% endif %}
             </div>
         {% empty %}

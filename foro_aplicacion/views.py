@@ -65,6 +65,11 @@ class UsuarioUpdateView(LoginRequiredMixin, UpdateView):
 class CategoriaListView(ListView):
     model = Categoria
     template_name = 'categorias/listar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['etiquetas'] = Etiqueta.objects.all()
+        return context
     
 
 ######################
@@ -110,6 +115,7 @@ class PublicacionListView(ListView):
 class PublicacionDetailView(DetailView):
     model = Publicacion
     template_name = 'publicaciones/detalle.html'
+    context_object_name = 'publicacion'
 
 ######################
 # VISTA crear publicacion

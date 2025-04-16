@@ -17,6 +17,8 @@ urlpatterns = [
     ###PUBLICACIONES###
     path('publicaciones/listar/', PublicacionListView.as_view(), name='listar_publicaciones'),
     path('publicaciones/crear/', PublicacionCreateView.as_view(), name='crear_publicacion'),
+    path('publicaciones/crear_etiqueta/', EtiquetaCreateView.as_view(), name='crear_etiqueta'),
+    path('publicaciones/detalle/<int:pk>', PublicacionDetailView.as_view(), name='detalle_publicacion'),
     
 
 
