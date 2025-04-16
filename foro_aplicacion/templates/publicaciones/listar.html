@@ -1,1 +1,33 @@
-oliT
+{% extends 'template_base.html' %}
+
+{% block title_page %}
+    <title>Publicaciones | Foro</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="titulo">Lista de Publicaciones</h1>
+    <div class="publicacion-lista">
+        {% for publicacion in publicaciones %}
+            <div class="publicacion-card">
+                <h2 class="titulo">{{ publicacion.titulo }}</h2>
+                <p class="contenido">{{ publicacion.contenido|truncatewords:30 }}</p>
+                <p class="autor">Escrito por: <strong>{{ publicacion.autor.username }}</strong></p>
+                <p class="fecha">Publicado el: {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
+                
+                {% if user.is_authenticated %}
+                    <a href="{% url 'editar_publicacion' publicacion.pk %}" class="btn btn-primary">Editar</a>
+                    <a href="{% url 'eliminar_publicacion' publicacion.pk %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="sin-publicaciones">No hay publicaciones disponibles.</p>
+        {% endfor %}
+    </div>
+    <div class="crear-publicacion">
+        {% if user.is_authenticated %}
+            <a href="{% url 'crear_publicacion' %}" class="btn btn-primary">Crear Publicación</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

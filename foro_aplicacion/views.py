@@ -158,3 +158,14 @@ def votar (request, publicacion_id, valor):
         defaults={'valor': valor}
     )
     return HttpResponseRedirect(reverse('detalle_publicacion', args=[publicacion.id]))  # No content, solo actualiza el voto sin redirigir
+
+
+######################
+# VISTA CREAR ETIQUETA
+#####################
+
+class EtiquetaCreateView(LoginRequiredMixin, CreateView):
+    model = Etiqueta
+    fields = ['nombre']
+    template_name = 'publicaciones/crear_etiqueta.html'
+    success_url = reverse_lazy('listar_publicaciones')

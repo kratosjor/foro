@@ -16,6 +16,7 @@ urlpatterns = [
     
     ###PUBLICACIONES###
     path('publicaciones/listar/', PublicacionListView.as_view(), name='listar_publicaciones'),
+    path('publicaciones/crear/', PublicacionCreateView.as_view(), name='crear_publicacion'),
     
 
 
