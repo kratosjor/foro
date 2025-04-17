@@ -29,12 +29,12 @@
 
         <div class="lista-comentarios">
             {% for comentario in comentarios %}
-                <div class="comentario-card">
-                    <p class="contenido-comentario">{{ comentario.texto }}</p>
-                    <p class="autor-comentario">
-                        <strong>{{ comentario.usuario.username }}</strong> - 
-                        {{ comentario.fecha|date:"d M Y H:i" }}
-                    </p>
+                <div class="comentario-card fade-in">
+                    <div class="comentario-header">
+                        <strong>{{ comentario.usuario.username }}</strong>
+                        <span class="comentario-fecha">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
+                    </div>
+                    <p class="comentario-texto">{{ comentario.contenido }}</p>
                 </div>
             {% empty %}
                 <p>No hay comentarios todavía. Sé el primero en opinar.</p>

@@ -8,6 +8,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LogoutView
+from django.views.generic.edit import FormMixin
 
 
 def home(request):
@@ -18,8 +21,6 @@ def home(request):
 # VISTA PARA INICIO DE SESIÓN DE USUARIO
 ######################
 
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.views import LogoutView
 
 class LoginUsuarioView(LoginView):
     template_name = 'foro_aplicacion/login_usuario.html'
@@ -112,10 +113,37 @@ class PublicacionListView(ListView):
 # VISTA detalle PUBLICACION
 ######################
 
-class PublicacionDetailView(DetailView):
+class PublicacionDetailView(FormMixin, DetailView):
     model = Publicacion
     template_name = 'publicaciones/detalle.html'
     context_object_name = 'publicacion'
+    form_class = ComentarioForm
+
+    def get_success_url(self):
+        return reverse('detalle_publicacion', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comentarios'] = Comentario.objects.filter(publicacion=self.object).order_by('fecha_creacion')
+        if 'form' not in context:
+            context['form'] = self.get_form()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        form = self.get_form()
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.usuario = request.user
+            comentario.publicacion = self.object
+            comentario.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
 
 ######################
 # VISTA crear publicacion
@@ -130,26 +158,6 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         return super().form_valid(form)
-
-
-######################
-# VISTA agregar comentario
-######################
-
-def agregar_comentario(request, pk):
-    publicacion = get_object_or_404(Publicacion, pk=pk)
-    if request.nethod == 'POST':
-        form = ComentarioForm(request.POST)
-        if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.usuario  = request.user
-            comentario.publicacion = publicacion
-            comentario.save()
-            return redirect('foro_aplicacion:detalle_publicacion', pk=publicacion.pk)
-    
-    else:
-        form = ComentarioForm()
-    return render(request, 'comentarios/agregar.html',{'form':form})
 
 
 ######################
