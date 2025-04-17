@@ -1,0 +1,23 @@
+{% extends 'template_base.html' %}
+
+{% block title_page %}
+    <title>Eliminar Publicación | Foro</title>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="alert alert-warning text-center" role="alert">
+        <h2>¿Estás seguro de que deseas eliminar esta publicación?</h2>
+        <p><strong>Título:</strong> {{ publicacion.titulo }}</p>
+        <p>Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger mx-2">Sí, eliminar</button>
+        </form>
+        <a href="{% url 'listar_publicaciones' %}" class="btn btn-secondary mx-2">Cancelar</a>
+    </div>
+</div>
+{% endblock %}

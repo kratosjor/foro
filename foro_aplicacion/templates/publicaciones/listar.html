@@ -22,11 +22,12 @@
                 <p class="fecha">Publicado el: {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
 
                 {% if user.is_authenticated %}
-                <div class="acciones">
-                    <a href="#" class="btn btn-editar">Editar</a>
-                    <a href="#" class="btn btn-eliminar">Eliminar</a>
-                </div>
+                    <div class="acciones">
+                        <a href="" class="btn btn-editar">Editar</a>
+                        <a href="{% url 'eliminar_publicacion' publicacion.pk %}" class="btn btn-eliminar">Eliminar</a>
+                    </div>
                 {% endif %}
+
             </div>
         {% empty %}
             <p class="sin-publicaciones">No hay publicaciones disponibles.</p>

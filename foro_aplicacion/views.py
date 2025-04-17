@@ -146,6 +146,18 @@ class PublicacionDetailView(FormMixin, DetailView):
             return self.form_invalid(form)
 
 ######################
+# VISTA ELIMINAR COMENTARIO 
+######################
+
+class EliminarComentarioView(LoginRequiredMixin, DeleteView):
+    model = Comentario
+    template_name = 'publicaciones/eliminar_comentario.html'
+    context_object_name = 'comentario'
+    def get_success_url(self):
+        return reverse('detalle_publicacion', kwargs={'pk': self.object.pk})
+
+
+######################
 # VISTA crear publicacion
 ######################
 
@@ -153,11 +165,25 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
     model = Publicacion
     fields = ['titulo','cuerpo','categoria','etiquetas']
     template_name = 'publicaciones/crear.html'
-    success_url = reverse_lazy('publicaciones')
+    success_url = reverse_lazy('listar_publicaciones')
     
+        
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         return super().form_valid(form)
+
+######################
+# VISTA ELIMINAR PUBLICACION
+######################
+
+class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
+    model = Publicacion
+    template_name = 'publicaciones/eliminar_publicacion.html'
+    context_object_name = 'publicacion'
+    
+    def get_success_url(self):
+        return reverse('listar_publicaciones')
+
 
 
 ######################
