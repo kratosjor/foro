@@ -18,8 +18,8 @@
                 </div>
 
                 <p class="contenido">{{ publicacion.contenido|truncatewords:30 }}</p>
-                <p class="autor">Escrito por: <strong>{{ publicacion.autor.username }}</strong></p>
-                <p class="fecha">Publicado el: {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
+                <p class="autor">Escrito por: <strong>{{ publicacion.usuario.username }}</strong></p>
+                <p class="fecha">Publicado el: {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
 
                 {% if user.is_authenticated %}
                     <div class="acciones">
