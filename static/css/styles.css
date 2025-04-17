@@ -284,82 +284,333 @@ body {
 .btn-cancel:hover {
     background-color: #95a5a6;
 }
-/* === CATEGORÍAS - ESTILO DE TARJETAS === */
+/* === CATEGORÍAS - TARJETAS VISUALES === */
 .categoria-lista {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
     margin-top: 2rem;
 }
 
 .categoria-card {
-    background: #fefefe;
-    border-left: 6px solid #7f7fd5;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: #ffffff;
+    border-left: 8px solid #7f7fd5;
+    padding: 1.8rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .categoria-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
-.categoria-card .nombre {
-    font-size: 1.4rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.categoria-card .descripcion {
-    font-size: 1rem;
-    color: #555;
+.categoria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.8rem;
 }
 
-.categoria-card .autor,
-.categoria-card .fecha {
-    font-size: 0.9rem;
+.categoria-card .nombre {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.descripcion {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.etiquetas-wrapper {
+    margin-top: 1rem;
+}
+
+.etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.chip-etiqueta {
+    display: inline-block;
+    background-color: #e0e7ff;
+    color: #333;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.crear-etiqueta-link {
+    font-size: 0.85rem;
+    color: #4c6ef5;
+    text-decoration: none;
+}
+
+.crear-etiqueta-link:hover {
+    text-decoration: underline;
+}
+
+.autor,
+.fecha {
+    font-size: 0.85rem;
     color: #777;
     margin: 0.2rem 0;
 }
 
-.categoria-card a.btn {
+.botones-categoria {
     margin-top: 1rem;
+}
+
+a.btn {
     display: inline-block;
-    background-color: #e53935;
-    color: white;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     font-weight: bold;
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.categoria-card a.btn:hover {
+.btn-publicaciones {
+    background-color: #7f7fd5;
+    color: white;
+}
+
+.btn-publicaciones:hover {
+    background-color: #5d5dd1;
+}
+
+.btn-eliminar {
+    background-color: #e53935;
+    color: white;
+}
+
+.btn-eliminar:hover {
     background-color: #c62828;
 }
+
+/* Botón principal de crear categoría */
 .crear-categoria {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 3rem;
 }
 
 .crear-categoria .btn {
-    display: inline-block;
     background: linear-gradient(90deg, #7f7fd5, #86a8e7);
     color: #fff;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
+    padding: 0.8rem 1.6rem;
+    border-radius: 10px;
     font-weight: bold;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: background 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
 .crear-categoria .btn:hover {
     background: linear-gradient(90deg, #5c5cd4, #7498e7);
     transform: translateY(-2px);
+}
+
+
+/* === PUBLICACIONES - TARJETAS VISUALES === */
+.publicacion-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.publicacion-card {
+    background: #ffffff;
+    border-left: 8px solid #86a8e7;
+    padding: 1.8rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.publicacion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.publicacion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.publicacion-card .titulo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.publicacion-card .contenido {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.autor,
+.fecha {
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0.2rem 0;
+}
+
+.acciones {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+a.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
     text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-ver {
+    background-color: #7f7fd5;
+    color: white;
+}
+
+.btn-ver:hover {
+    background-color: #5d5dd1;
+}
+
+.btn-editar {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #388e3c;
+}
+
+.btn-eliminar {
+    background-color: #e53935;
+    color: white;
+}
+
+.btn-eliminar:hover {
+    background-color: #c62828;
+}
+
+/* Crear publicación */
+.crear-publicacion {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.crear-publicacion .btn {
+    background: linear-gradient(90deg, #7f7fd5, #86a8e7);
+    color: #fff;
+    padding: 0.8rem 1.6rem;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.crear-publicacion .btn:hover {
+    background: linear-gradient(90deg, #5c5cd4, #7498e7);
+    transform: translateY(-2px);
+}
+
+/*DETALLE PUBLICACION*/
+.detalle-publicacion-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+}
+
+.publicacion-detalle-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-left: 5px solid #7f7fd5;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.publicacion-detalle-card h1.titulo {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.publicacion-detalle-card p {
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.comentarios-section h2 {
+    font-size: 1.4rem;
+    color: #444;
+    margin-bottom: 1rem;
+}
+
+.formulario-comentario textarea,
+.formulario-comentario input[type="text"] {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+}
+
+.formulario-comentario .btn {
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #7f7fd5;
+    color: white;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.formulario-comentario .btn:hover {
+    background-color: #5d5dd1;
+}
+
+.lista-comentarios {
+    margin-top: 1.5rem;
+}
+
+.comentario-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+}
+
+.contenido-comentario {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.autor-comentario {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.info-login {
+    font-style: italic;
+    color: #888;
 }

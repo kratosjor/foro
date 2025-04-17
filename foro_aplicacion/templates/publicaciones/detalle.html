@@ -5,11 +5,41 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1 class="titulo">{{ publicacion.titulo }}</h1>
-    <p class="contenido">{{ publicacion.cuerpo }}</p>
-    <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
-    <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
-    <p class="fecha"><strong>Fecha de publicación:</strong> {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
+<div class="detalle-publicacion-container">
+    <div class="publicacion-detalle-card">
+        <h1 class="titulo">{{ publicacion.titulo }}</h1>
+        <p class="contenido">{{ publicacion.cuerpo }}</p>
+        <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
+        <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
+        <p class="fecha"><strong>Fecha de publicación:</strong> {{ publicacion.fecha_publicacion|date:"d M Y" }}</p>
+    </div>
+
+    <div class="comentarios-section">
+        <h2>Comentarios</h2>
+
+        {% if user.is_authenticated %}
+            <form method="post" class="formulario-comentario">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Comentar</button>
+            </form>
+        {% else %}
+            <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+        {% endif %}
+
+        <div class="lista-comentarios">
+            {% for comentario in comentarios %}
+                <div class="comentario-card">
+                    <p class="contenido-comentario">{{ comentario.texto }}</p>
+                    <p class="autor-comentario">
+                        <strong>{{ comentario.usuario.username }}</strong> - 
+                        {{ comentario.fecha|date:"d M Y H:i" }}
+                    </p>
+                </div>
+            {% empty %}
+                <p>No hay comentarios todavía. Sé el primero en opinar.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

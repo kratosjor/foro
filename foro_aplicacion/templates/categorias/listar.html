@@ -6,39 +6,47 @@
 
 {% block body %}
 <div class="container">
-    <h1 class="titulo">Categorías del Foro</h1>
+    <h1 class="titulo">Explora las Categorías del Foro</h1>
     <div class="categoria-lista">
         {% for categoria in object_list %}
             <div class="categoria-card">
-                <h2 class="nombre">{{ categoria.nombre }}</h2>
-                <a href="{% url 'crear_etiqueta'  %}">Crear Etiqueta</a>
-                <h3>Etiquetas:</h3>
-        <ul>
-            {% for etiqueta in etiquetas %}
-                <li>{{ etiqueta.nombre }}</li>
-            {% endfor %}
-        </ul>
+                <div class="categoria-header">
+                    <h2 class="nombre">{{ categoria.nombre }}</h2>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-eliminar">Eliminar</a>
+                    {% endif %}
+                </div>
+
                 <p class="descripcion">{{ categoria.descripcion|default:"Sin descripción" }}</p>
+                
+                <div class="etiquetas-wrapper">
+                    <h3>Etiquetas:</h3>
+                    <div class="etiquetas">
+                        {% for etiqueta in etiquetas %}
+                            {% if etiqueta.categoria.id == categoria.id %}
+                                <span class="chip-etiqueta">{{ etiqueta.nombre }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'crear_etiqueta' %}" class="crear-etiqueta-link">+ Añadir Etiqueta</a>
+                </div>
+
                 <p class="autor">Creada por: <strong>{{ categoria.usuario.username }}</strong></p>
                 <p class="fecha">Desde: {{ categoria.fecha_creacion|date:"d M Y" }}</p>
 
-                <div>
-                <a href="{% url "listar_publicaciones" %}" class="btn btn-danger">Publicaciones</a>
+                <div class="botones-categoria">
+                    <a href="{% url 'listar_publicaciones' %}" class="btn btn-publicaciones">Ver Publicaciones</a>
                 </div>
-                {% if user.is_authenticated %}
-                    
-                    <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-danger">Eliminar</a>
-                {% endif %}
             </div>
         {% empty %}
             <p class="sin-categorias">No hay categorías disponibles.</p>
         {% endfor %}
     </div>
+
     <div class="crear-categoria">
         {% if user.is_authenticated %}
-            <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+            <a href="{% url 'crear_categoria' %}" class="btn">Crear Nueva Categoría</a>
         {% endif %}
     </div>
-    
 </div>
 {% endblock %}

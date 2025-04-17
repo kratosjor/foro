@@ -174,4 +174,4 @@ class EtiquetaCreateView(LoginRequiredMixin, CreateView):
     model = Etiqueta
     fields = ['nombre']
     template_name = 'publicaciones/crear_etiqueta.html'
-    success_url = reverse_lazy('listar_publicaciones')
+    success_url = reverse_lazy('listar')
