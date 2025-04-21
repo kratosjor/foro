@@ -35,7 +35,7 @@
                 <p class="fecha">Desde: {{ categoria.fecha_creacion|date:"d M Y" }}</p>
 
                 <div class="botones-categoria">
-                    <a href="{% url 'listar_publicaciones' %}" class="btn btn-publicaciones">Ver Publicaciones</a>
+                    <a href="{% url 'publicaciones_por_categoria' categoria.id %}" class="btn btn-publicaciones">Ver Publicaciones</a>
                 </div>
             </div>
         {% empty %}

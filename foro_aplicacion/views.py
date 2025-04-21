@@ -107,6 +107,14 @@ class PublicacionListView(ListView):
     model = Publicacion
     template_name = 'publicaciones/listar.html'
     context_object_name = 'publicaciones'
+
+######################
+# VISTA PUBLICACIONES POR CATEGORIA
+######################    
+
+def publicaciones_por_categoria(request, categoria_id):
+    publicaciones = Publicacion.objects.filter(categoria_id=categoria_id)
+    return render(request, 'publicaciones/listar_por_categoria.html', {'publicaciones': publicaciones})
     
 
 ######################

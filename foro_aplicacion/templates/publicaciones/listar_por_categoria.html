@@ -1,0 +1,28 @@
+{% extends 'template_base.html' %}
+
+{% block body %}
+    <h1>Publicaciones de la Categoría</h1>
+
+    {% if publicaciones %}
+        {% for publicacion in publicaciones %}
+            <div class="publicacion-card">
+                <div class="publicacion-header">
+                    <h2 class="titulo">{{ publicacion.titulo }}</h2>
+                    <a href="{% url 'detalle_publicacion' publicacion.pk %}" class="btn btn-ver">Ver Detalles</a>
+                </div>
+
+                <p class="contenido">{{ publicacion.contenido|truncatewords:30 }}</p>
+                <p class="autor">Escrito por: <strong>{{ publicacion.usuario.username }}</strong></p>
+                <p class="fecha">Publicado el: {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
+            </div>
+        {% endfor %}
+        
+    {% else %}
+        <p>No hay publicaciones en esta categoría.</p>
+    {% endif %}
+    <div class="crear-publicacion">
+        {% if user.is_authenticated %}
+            <a href="{% url 'crear_publicacion' %}" class="btn">Crear Nueva Publicación</a>
+        {% endif %}
+    </div>
+{% endblock body %}
