@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from django.views.generic.edit import FormMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 def home(request):
@@ -217,3 +218,31 @@ class EtiquetaCreateView(LoginRequiredMixin, CreateView):
     fields = ['nombre']
     template_name = 'publicaciones/crear_etiqueta.html'
     success_url = reverse_lazy('listar')
+
+######################
+# VISTA LISTA DE USUARIOS
+#####################
+
+def lista_usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'foro_aplicacion/lista_usuarios.html', {'usuarios': usuarios})
+
+
+######################
+# VISTA ASIGNAR ROLES DE USUARIOS
+#####################
+
+class AsignarRolView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Usuario
+    fields = ['es_admin','es_baneado','es_moderador','es_autor']
+    template_name = 'foro_aplicacion/asignar_rol.html'
+    success_url = reverse_lazy('home')
+
+    def test_func(self):
+        user = self.request.user
+        # Si no hay admins aún, permitir acceso al primer usuario autenticado
+        if not Usuario.objects.filter(es_admin=True).exists():
+            return user.is_authenticated
+        # Si ya hay admins, solo ellos pueden acceder
+        return user.is_authenticated and user.es_admin
+

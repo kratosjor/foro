@@ -1,0 +1,13 @@
+{% extends "template_base.html" %}
+
+{% block body %}
+    <h1>Lista de Usuarios</h1>
+    <ul>
+        {% for usuario in usuarios %}
+            <li>
+                {{ usuario.username }}
+                <a href="{% url 'asignar_rol' usuario.pk %}">Asignar Rol</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

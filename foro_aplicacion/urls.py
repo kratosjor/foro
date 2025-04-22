@@ -23,6 +23,8 @@ urlpatterns = [
     path('publicaciones/eliminar_publicacion/<int:pk>/', EliminarPublicacionView.as_view(), name='eliminar_publicacion'),
     path('publicaciones/categoria/<int:categoria_id>/', publicaciones_por_categoria, name='publicaciones_por_categoria'),
 
-    
+    #usuarios
+    path('lista_usuarios/', lista_usuarios, name='lista_usuarios'),
+    path('usuarios/<int:pk>/asignar_rol/', AsignarRolView.as_view(), name='asignar_rol'),  
 
 ]
