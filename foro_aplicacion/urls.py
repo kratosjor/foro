@@ -27,4 +27,7 @@ urlpatterns = [
     path('lista_usuarios/', lista_usuarios, name='lista_usuarios'),
     path('usuarios/<int:pk>/asignar_rol/', AsignarRolView.as_view(), name='asignar_rol'),  
 
+    #voto
+    path('publicacion/<int:publicacion_id>/voto/', CrearVotoview.as_view(), name='crear_voto'),  # Para vistas basadas en clases
+
 ]

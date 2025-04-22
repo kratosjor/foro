@@ -12,7 +12,7 @@
             <div class="categoria-card">
                 <div class="categoria-header">
                     <h2 class="nombre">{{ categoria.nombre }}</h2>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user.es_admin %}
                         <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-eliminar">Eliminar</a>
                     {% endif %}
                 </div>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="crear-categoria">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and user.es_admin %}
             <a href="{% url 'crear_categoria' %}" class="btn">Crear Nueva Categoría</a>
         {% endif %}
     </div>

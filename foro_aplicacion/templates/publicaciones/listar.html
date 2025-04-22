@@ -22,7 +22,7 @@
                 <p class="fecha">Publicado el: {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
                 <p class="fecha">Categoria: {{ publicacion.categoria }}</p>
 
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.es_autor %}
                     <div class="acciones">
                         <a href="" class="btn btn-editar">Editar</a>
                         <a href="{% url 'eliminar_publicacion' publicacion.pk %}" class="btn btn-eliminar">Eliminar</a>

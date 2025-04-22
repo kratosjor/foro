@@ -2,8 +2,9 @@
 
 {% block body %}
     <h1>Home Page</h1>
-    
+    {% if user.is_authenticated and user.es_admin %}
     <a href="{% url "lista_usuarios" %}">Ver Usuarios</a>
+    {% endif %}
 
    
 

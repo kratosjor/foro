@@ -23,7 +23,7 @@
     {% endif %}
     
     <div class="crear-publicacion">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and user.es_autor %}
             <a href="{% url 'crear_publicacion' %}" class="btn">Crear Nueva Publicación</a>
         {% endif %}
     </div>

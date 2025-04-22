@@ -246,3 +246,32 @@ class AsignarRolView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         # Si ya hay admins, solo ellos pueden acceder
         return user.is_authenticated and user.es_admin
 
+
+######################
+# VISTA VOTOSS
+#####################
+
+class CrearVotoview(LoginRequiredMixin, CreateView):
+    model = Voto
+    fields = ['valor']
+
+    def form_valid(self, form):
+        publicacion_id = self.kwargs['publicacion_id']
+        publicacion = Publicacion.objects.get(id=publicacion_id)
+        usuario = self.request.user
+
+        voto, creado = Voto.objects.get_or_create(
+            publicacion=publicacion,
+            usuario=usuario,
+            defaults={'valor': form.cleaned_data['valor']}
+        )
+
+        if not creado:
+            # Si el voto ya existe, actualiza el valor
+            voto.valor = form.cleaned_data['valor']
+            voto.save()
+
+        return redirect('detalle_publicacion', pk=publicacion_id)
+
+    def form_invalid(self, form):
+        return HttpResponse("Error al procesar el voto", status=400)
