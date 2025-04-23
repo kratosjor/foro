@@ -28,6 +28,6 @@ urlpatterns = [
     path('usuarios/<int:pk>/asignar_rol/', AsignarRolView.as_view(), name='asignar_rol'),  
 
     #voto
-    path('publicacion/<int:publicacion_id>/voto/', CrearVotoview.as_view(), name='crear_voto'),  # Para vistas basadas en clases
+    path('votar/<int:pk>/', crear_voto, name='crear_voto'),
 
 ]

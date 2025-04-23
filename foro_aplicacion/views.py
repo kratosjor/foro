@@ -5,13 +5,15 @@ from django.views.generic import CreateView, UpdateView, DetailView, ListView, D
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views import View
+from django.core.paginator import Paginator
 
 
 def home(request):
@@ -133,9 +135,19 @@ class PublicacionDetailView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comentarios'] = Comentario.objects.filter(publicacion=self.object).order_by('fecha_creacion')
+        publicacion = self.get_object()
+
+        # Comentarios
+        context['comentarios'] = Comentario.objects.filter(publicacion=publicacion).order_by('fecha_creacion')
+
+        # Likes y Dislikes
+        context['likes'] = publicacion.votos.filter(valor=1).count()
+        context['dislikes'] = publicacion.votos.filter(valor=-1).count()
+
+        # Formulario de comentarios
         if 'form' not in context:
             context['form'] = self.get_form()
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -153,7 +165,7 @@ class PublicacionDetailView(FormMixin, DetailView):
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
-
+        
 ######################
 # VISTA ELIMINAR COMENTARIO 
 ######################
@@ -199,14 +211,21 @@ class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
 # VISTA votar
 ######################
 
-def votar (request, publicacion_id, valor):
-    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-    voto, created = Voto.objects.update_or_create(
-        publicacion = publicacion,
-        usuario = request.user,
-        defaults={'valor': valor}
-    )
-    return HttpResponseRedirect(reverse('detalle_publicacion', args=[publicacion.id]))  # No content, solo actualiza el voto sin redirigir
+def crear_voto(request, pk):
+    if request.method == 'POST' and request.user.is_authenticated:
+        publicacion = get_object_or_404(Publicacion, pk=pk)
+        valor = int(request.POST.get('valor'))
+
+        # Opcional: evitar votos repetidos del mismo usuario
+        voto_existente = Voto.objects.filter(usuario=request.user, publicacion=publicacion).first()
+        if voto_existente:
+            voto_existente.valor = valor
+            voto_existente.save()
+        else:
+            Voto.objects.create(usuario=request.user, publicacion=publicacion, valor=valor)
+
+        return redirect('detalle_publicacion', pk=pk)
+    return redirect('login')
 
 
 ######################
@@ -224,8 +243,22 @@ class EtiquetaCreateView(LoginRequiredMixin, CreateView):
 #####################
 
 def lista_usuarios(request):
+    nombre = request.GET.get('nombre', '')
     usuarios = Usuario.objects.all()
-    return render(request, 'foro_aplicacion/lista_usuarios.html', {'usuarios': usuarios})
+
+    if nombre:
+        usuarios = usuarios.filter(username__icontains=nombre)
+
+    # Paginación: mostrar 10 usuarios por página
+    paginator = Paginator(usuarios, 10)
+    page_number = request.GET.get('page')
+    usuarios_paginados = paginator.get_page(page_number)
+
+    return render(request, 'foro_aplicacion/lista_usuarios.html', {
+        'usuarios': usuarios_paginados,
+        'nombre': nombre  # Para mantener el valor del campo en la barra de búsqueda
+    })
+
 
 
 ######################
@@ -247,31 +280,13 @@ class AsignarRolView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return user.is_authenticated and user.es_admin
 
 
-######################
-# VISTA VOTOSS
-#####################
-
-class CrearVotoview(LoginRequiredMixin, CreateView):
-    model = Voto
-    fields = ['valor']
-
-    def form_valid(self, form):
-        publicacion_id = self.kwargs['publicacion_id']
-        publicacion = Publicacion.objects.get(id=publicacion_id)
-        usuario = self.request.user
-
-        voto, creado = Voto.objects.get_or_create(
-            publicacion=publicacion,
-            usuario=usuario,
-            defaults={'valor': form.cleaned_data['valor']}
-        )
-
-        if not creado:
-            # Si el voto ya existe, actualiza el valor
-            voto.valor = form.cleaned_data['valor']
-            voto.save()
-
-        return redirect('detalle_publicacion', pk=publicacion_id)
-
-    def form_invalid(self, form):
-        return HttpResponse("Error al procesar el voto", status=400)
+#def listado_de_pacientes(request):
+#    pacientes = Paciente.objects.all()
+#    formulario = Buscar_PacienteForm(request.GET)
+#    
+#    if formulario.is_valid():
+#        nombre_a_buscar = formulario.cleaned_data.get('nombre')
+#        if nombre_a_buscar:
+#            pacientes = Paciente.objects.filter(nombre__icontains=nombre_a_buscar)
+#            
+#    return render(request, 'RegistroPacientes/listado_de_pacientes.html', {'pacientes': pacientes, "formulario":formulario})

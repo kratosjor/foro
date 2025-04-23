@@ -2,12 +2,71 @@
 
 {% block body %}
     <h1>Lista de Usuarios</h1>
-    <ul>
-        {% for usuario in usuarios %}
-            <li>
-                {{ usuario.username }}
-                <a href="{% url 'asignar_rol' usuario.pk %}">Asignar Rol</a>
-            </li>
-        {% endfor %}
-    </ul>
+
+    <!-- Formulario de búsqueda -->
+    <form method="get" class="buscar-usuarios-form mb-3">
+        <label for="nombre">Buscar por nombre de usuario</label>
+        <input type="text" name="nombre" id="nombre" value="{{ nombre }}" placeholder="Escribe un nombre...">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Listado de usuarios en una tabla -->
+    <table class="tabla-usuarios">
+        <thead>
+            <tr>
+                <th>Nombre de usuario</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.username }}</td>
+                    <td>
+                        {% if usuario.es_admin %}
+                            <span class="role-admin">Es Admin</span>
+                        {% elif usuario.es_moderador %}
+                            <span class="role-moderador">Es Moderador</span>
+                        {% elif usuario.es_baneado %}
+                            <span class="role-baneado">Está Baneado</span>
+                        {% elif usuario.es_autor %}
+                            <span class="role-autor">Es Autor</span>
+                        {% elif usuario.es_usuario %}
+                            <span class="role-usuario">Es Usuario</span>
+                        {% else %}
+                            <span class="role-sin-rol">Sin Rol</span>
+                        {% endif %}
+                    </td>
+                    <td class="acciones">
+                        <a href="{% url 'asignar_rol' usuario.pk %}" class="btn-asignar-rol">Asignar Rol</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No se encontraron usuarios.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if usuarios.has_previous %}
+                <a href="?page=1&nombre={{ nombre }}">Primera</a>
+                <a href="?page={{ usuarios.previous_page_number }}&nombre={{ nombre }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ usuarios.number }} de {{ usuarios.paginator.num_pages }}.
+            </span>
+
+            {% if usuarios.has_next %}
+                <a href="?page={{ usuarios.next_page_number }}&nombre={{ nombre }}">Siguiente</a>
+                <a href="?page={{ usuarios.paginator.num_pages }}&nombre={{ nombre }}">Última</a>
+            {% endif %}
+        </span>
+    </div>
+
 {% endblock %}

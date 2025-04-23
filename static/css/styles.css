@@ -662,3 +662,93 @@ a.btn {
         transform: translateY(0);
     }
 }
+/*TABLA DE USUARIOS*/
+/* Estilo de la tabla */
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-usuarios th, .tabla-usuarios td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+/* Estilo de los encabezados de columna */
+.tabla-usuarios th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Estilo para las celdas de la columna de roles */
+.tabla-usuarios td {
+    vertical-align: middle;
+}
+
+/* Estilo de los roles */
+.tabla-usuarios .role-admin {
+    background-color: #ff4444; /* Rojo */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.tabla-usuarios .role-moderador {
+    background-color: #ffbb33; /* Naranja */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.tabla-usuarios .role-baneado {
+    background-color: #666666; /* Gris */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.tabla-usuarios .role-autor {
+    background-color: #3388ff; /* Azul */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.tabla-usuarios .role-usuario {
+    background-color: #28a745; /* Verde */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.tabla-usuarios .role-sin-rol {
+    background-color: #f1f1f1; /* Gris claro */
+    color: #555;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+/* Estilo para los enlaces de asignar rol */
+.tabla-usuarios .btn-asignar-rol {
+    text-decoration: none; /* Elimina el subrayado */
+    background-color: #a5a5a5; /* Azul para el botón */
+    color: white; /* Texto en blanco */
+    padding: 6px 12px; /* Espaciado interno */
+    border-radius: 4px; /* Bordes redondeados */
+    font-weight: bold; /* Negrita */
+    text-align: center; /* Centrar el texto */
+    display: inline-block; /* Permite que se muestre como un botón */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.tabla-usuarios .btn-asignar-rol:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+    cursor: pointer; /* Cambia el cursor cuando se pasa sobre el enlace */
+}
