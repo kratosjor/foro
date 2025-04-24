@@ -29,5 +29,9 @@ urlpatterns = [
 
     #voto
     path('votar/<int:pk>/', crear_voto, name='crear_voto'),
+    
+    #perfil
+    path('perfil/<int:usuario_id>/', perfil_usuario, name='perfil_usuario'),
+
 
 ]

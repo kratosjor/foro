@@ -290,3 +290,20 @@ class AsignarRolView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #            pacientes = Paciente.objects.filter(nombre__icontains=nombre_a_buscar)
 #            
 #    return render(request, 'RegistroPacientes/listado_de_pacientes.html', {'pacientes': pacientes, "formulario":formulario})
+
+######################
+# VISTA PERFIL DE USUARIO
+#####################
+
+def perfil_usuario(request, usuario_id):
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    publicaciones = Publicacion.objects.filter(usuario=usuario).order_by('fecha_creacion')
+    comentarios = Comentario.objects.filter(usuario=usuario).order_by('fecha_creacion')
+    
+    return render(request, 'foro_aplicacion/perfil_usuario.html', {
+        'usuario': usuario,
+        'publicaciones': publicaciones,
+        'comentarios': comentarios
+    })
+
+

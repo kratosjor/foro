@@ -40,34 +40,43 @@ main {
     border-radius: 16px;
     box-shadow: 0 0 15px rgba(0,0,0,0.08);
 }
+/* Estilo para el navbar */
 nav {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
 }
 
-.nav-left {
-    display: flex;
-    gap: 20px;
+.nav-left a,
+.nav-right a,
+.link-perfil-usuario {
+    text-decoration: none;
+    color: #eeeeee;
+    margin-right: 1rem;
+    font-weight: bold;
+    transition: color 0.2s ease;
 }
 
-.nav-right form {
-    margin: 0;
+.link-perfil-usuario:hover {
+    color: #007BFF;
 }
 
 .logout-button {
-    background-color: #ff5252;
+    background-color: #dc3545;
     border: none;
     color: white;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
     font-weight: bold;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .logout-button:hover {
-    background-color: #d84315;
+    background-color: #c82333;
 }
 
 /* === FOOTER === */
@@ -751,4 +760,186 @@ a.btn {
 .tabla-usuarios .btn-asignar-rol:hover {
     background-color: #0056b3; /* Color más oscuro al pasar el ratón */
     cursor: pointer; /* Cambia el cursor cuando se pasa sobre el enlace */
+}
+/*PERFIL*/
+/* Estilo general */
+.perfil-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.perfil-avatar {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.perfil-info {
+    flex-grow: 1;
+}
+
+.perfil-username {
+    font-size: 30px;
+    font-weight: bold;
+    color: #4a90e2; /* Azul brillante */
+    margin-bottom: 10px;
+}
+
+.perfil-email {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.perfil-roles {
+    display: flex;
+    gap: 10px;
+}
+
+.rol {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.rol.admin {
+    background-color: #e74c3c; /* Rojo para admin */
+}
+
+.rol.moderador {
+    background-color: #2980b9; /* Azul para moderador */
+}
+
+.rol.baneado {
+    background-color: #c0392b; /* Rojo oscuro para baneado */
+}
+
+.rol.autor {
+    background-color: #2ecc71; /* Verde para autor */
+}
+
+.rol.usuario {
+    background-color: #8e44ad; /* Morado para usuario normal */
+}
+
+/* Secciones */
+.perfil-secciones {
+    margin-top: 40px;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Reputación */
+.perfil-reputacion {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.reputacion-puntos {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e67e22; /* Naranja para los puntos de reputación */
+}
+
+/* Publicaciones y Comentarios */
+.perfil-publicaciones,
+.perfil-comentarios {
+    background-color: #f1f3f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.list-publicaciones, .list-comentarios {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.publicacion-item, .comentario-item {
+    padding: 15px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.publicacion-item:last-child, .comentario-item:last-child {
+    border-bottom: none;
+}
+
+.publicacion-titulo {
+    font-size: 18px;
+    color: #3498db; /* Azul para los títulos */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.publicacion-titulo:hover {
+    text-decoration: underline;
+}
+
+.publicacion-fecha,
+.comentario-fecha {
+    font-size: 14px;
+    color: #888;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Botón de editar perfil */
+.editar-perfil {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #27ae60; /* Verde */
+    color: white;
+    font-size: 16px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.editar-perfil:hover {
+    background-color: #2ecc71; /* Cambio de verde cuando pasa el mouse */
+}
+
+/* Media Query */
+@media (max-width: 768px) {
+    .perfil-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .perfil-avatar {
+        margin-bottom: 15px;
+    }
 }

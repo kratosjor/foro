@@ -1,0 +1,70 @@
+{% extends "template_base.html" %}
+
+{% block body %}
+<div class="perfil-container">
+    <div class="perfil-header">
+        <div class="perfil-avatar">
+            <img src="{{ usuario.profile_picture.url }}" alt="Avatar de {{ usuario.username }}" class="avatar-img">
+        </div>
+        <div class="perfil-info">
+            <h1 class="perfil-username">{{ usuario.username }}</h1>
+            <p class="perfil-email">{{ usuario.correo }}</p>
+            <div class="perfil-roles">
+                {% if usuario.es_admin %}
+                    <span class="rol admin">Administrador</span>
+                {% elif usuario.es_moderador %}
+                    <span class="rol moderador">Moderador</span>
+                {% elif usuario.es_baneado %}
+                    <span class="rol baneado">Baneado</span>
+                {% elif usuario.es_autor %}
+                    <span class="rol autor">Autor</span>
+                {% else %}
+                    <span class="rol usuario">Usuario normal</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="perfil-secciones">
+        <!-- Información de Reputación -->
+        <section class="perfil-reputacion">
+            <h2>Reputación</h2>
+            <p class="reputacion-puntos">{{ usuario.reputacion }} puntos</p>
+        </section>
+
+        <!-- Publicaciones -->
+        <section class="perfil-publicaciones">
+            <h2>Publicaciones de {{ usuario.username }}</h2>
+            {% if publicaciones %}
+                <ul class="list-publicaciones">
+                    {% for publicacion in publicaciones %}
+                        <li class="publicacion-item">
+                            <a href="{% url 'detalle_publicacion' publicacion.id %}" class="publicacion-titulo">{{ publicacion.titulo }}</a>
+                            <span class="publicacion-fecha">{{ publicacion.fecha_creacion|date:"d/m/Y" }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No ha publicado aún.</p>
+            {% endif %}
+        </section>
+
+        <!-- Comentarios -->
+        <section class="perfil-comentarios">
+            <h2>Comentarios de {{ usuario.username }}</h2>
+            {% if comentarios %}
+                <ul class="list-comentarios">
+                    {% for comentario in comentarios %}
+                        <li class="comentario-item">
+                            <p>"{{ comentario.contenido }}"</p>
+                            <span class="comentario-fecha">{{ comentario.fecha_creacion|date:"d/m/Y" }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No ha realizado comentarios aún.</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
