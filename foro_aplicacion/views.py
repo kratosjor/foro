@@ -216,16 +216,34 @@ def crear_voto(request, pk):
         publicacion = get_object_or_404(Publicacion, pk=pk)
         valor = int(request.POST.get('valor'))
 
-        # Opcional: evitar votos repetidos del mismo usuario
         voto_existente = Voto.objects.filter(usuario=request.user, publicacion=publicacion).first()
         if voto_existente:
+            diferencia = valor - voto_existente.valor
+            publicacion.usuario.reputacion += diferencia * 5
+
+            # No permitir reputación negativa
+            if publicacion.usuario.reputacion < 0:
+                publicacion.usuario.reputacion = 0
+
+            publicacion.usuario.save()
+
             voto_existente.valor = valor
             voto_existente.save()
         else:
             Voto.objects.create(usuario=request.user, publicacion=publicacion, valor=valor)
 
+            publicacion.usuario.reputacion += valor * 5
+
+            # No permitir reputación negativa
+            if publicacion.usuario.reputacion < 0:
+                publicacion.usuario.reputacion = 0
+
+            publicacion.usuario.save()
+
         return redirect('detalle_publicacion', pk=pk)
+    
     return redirect('login')
+
 
 
 ######################
@@ -280,16 +298,6 @@ class AsignarRolView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return user.is_authenticated and user.es_admin
 
 
-#def listado_de_pacientes(request):
-#    pacientes = Paciente.objects.all()
-#    formulario = Buscar_PacienteForm(request.GET)
-#    
-#    if formulario.is_valid():
-#        nombre_a_buscar = formulario.cleaned_data.get('nombre')
-#        if nombre_a_buscar:
-#            pacientes = Paciente.objects.filter(nombre__icontains=nombre_a_buscar)
-#            
-#    return render(request, 'RegistroPacientes/listado_de_pacientes.html', {'pacientes': pacientes, "formulario":formulario})
 
 ######################
 # VISTA PERFIL DE USUARIO
