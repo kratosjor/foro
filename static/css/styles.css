@@ -943,3 +943,82 @@ h2 {
         margin-bottom: 15px;
     }
 }
+/*HOME*/
+/* Estilos Home */
+.home-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.home-title {
+    font-size: 36px;
+    text-align: center;
+    color: #6a11cb;
+    margin-bottom: 20px;
+}
+
+.user-actions, .guest-message {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn-ver-usuarios, .btn-login {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    padding: 10px 20px;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-ver-usuarios:hover, .btn-login:hover {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+}
+
+.publicaciones-section {
+    margin-top: 40px;
+}
+
+.section-title {
+    font-size: 28px;
+    color: #ff6a00;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.publicacion-card {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.publicacion-card h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.publicacion-autor {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.btn-detalle {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #00c6ff;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-detalle:hover {
+    background-color: #0072ff;
+}

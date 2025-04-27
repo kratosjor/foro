@@ -17,7 +17,8 @@ from django.core.paginator import Paginator
 
 
 def home(request):
-    return render(request, 'foro_aplicacion/home.html')
+    publicaciones = Publicacion.objects.select_related('usuario').order_by('-usuario__reputacion','-fecha_creacion') # Obtener las últimas 5 publicaciones
+    return render(request, 'foro_aplicacion/home.html', {'publicaciones': publicaciones})
 
 
 ######################

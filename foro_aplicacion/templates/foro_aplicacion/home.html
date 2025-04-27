@@ -1,11 +1,36 @@
 {% extends "template_base.html" %}
 
 {% block body %}
-    <h1>Home Page</h1>
-    {% if user.is_authenticated and user.es_admin %}
-    <a href="{% url "lista_usuarios" %}">Ver Usuarios</a>
+<main class="home-container">
+    <h1 class="home-title">Bienvenido al Foro 🚀</h1>
+
+    {% if user.is_authenticated %}
+        <div class="user-actions">
+            <p class="welcome-message">Hola, <strong>{{ user.username }}</strong> 👋</p>
+            {% if user.es_admin %}
+                <a href="{% url "lista_usuarios" %}" class="btn-ver-usuarios">Administrar Usuarios</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="guest-message">
+            <p>Inicia sesión para participar en las publicaciones 🔥</p>
+            <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+        </div>
     {% endif %}
 
-   
+    <section class="publicaciones-section">
+        <h2 class="section-title">Publicaciones Destacadas ⭐</h2>
 
+        {% for publicacion in publicaciones %}
+            <div class="publicacion-card">
+                <h3>{{ publicacion.titulo }}</h3>
+                <p class="publicacion-autor">por {{ publicacion.usuario.username }} (Reputación: {{ publicacion.usuario.reputacion }})</p>
+                <p>{{ publicacion.contenido|truncatewords:20 }}</p>
+                <a href="{% url 'detalle_publicacion' publicacion.pk %}" class="btn-detalle">Leer más</a>
+            </div>
+        {% empty %}
+            <p>No hay publicaciones aún 😢</p>
+        {% endfor %}
+    </section>
+</main>
 {% endblock body %}
