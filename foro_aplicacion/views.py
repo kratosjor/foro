@@ -138,14 +138,24 @@ class PublicacionDetailView(FormMixin, DetailView):
         context = super().get_context_data(**kwargs)
         publicacion = self.get_object()
 
-        # Comentarios
-        context['comentarios'] = Comentario.objects.filter(publicacion=publicacion).order_by('fecha_creacion')
+        # Comentarios principales (sin padre)
+        comentarios = Comentario.objects.filter(publicacion=publicacion, comentario_padre__isnull=True).order_by('fecha_creacion')
+        context['comentarios'] = comentarios
 
-        # Likes y Dislikes
+        # Diccionario de respuestas por ID
+        respuestas = Comentario.objects.filter(publicacion=publicacion, comentario_padre__isnull=False).order_by('fecha_creacion')
+        respuestas_por_comentario = {}
+        for respuesta in respuestas:
+            padre_id = respuesta.comentario_padre_id
+            respuestas_por_comentario.setdefault(padre_id, []).append(respuesta)
+
+        context['respuestas_por_comentario'] = respuestas_por_comentario
+
+        # Likes y Dislikes de la publicación
         context['likes'] = publicacion.votos.filter(valor=1).count()
         context['dislikes'] = publicacion.votos.filter(valor=-1).count()
 
-        # Formulario de comentarios
+        # Formulario de comentario
         if 'form' not in context:
             context['form'] = self.get_form()
 
@@ -162,11 +172,21 @@ class PublicacionDetailView(FormMixin, DetailView):
             comentario = form.save(commit=False)
             comentario.usuario = request.user
             comentario.publicacion = self.object
+
+            # Verifica si es respuesta a otro comentario
+            padre_id = request.POST.get('comentario_padre_id')
+            if padre_id:
+                try:
+                    padre = Comentario.objects.get(pk=padre_id)
+                    comentario.comentario_padre = padre
+                except Comentario.DoesNotExist:
+                    pass  # ignora si no existe
+
             comentario.save()
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
-        
+
 ######################
 # VISTA ELIMINAR COMENTARIO 
 ######################
@@ -243,6 +263,41 @@ def crear_voto(request, pk):
 
         return redirect('detalle_publicacion', pk=pk)
     
+    return redirect('login')
+
+
+######################
+# VISTA votar COMENTARIO
+######################
+
+def votar_comentario(request, comentario_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        comentario = get_object_or_404(Comentario, pk=comentario_id)
+        valor = int(request.POST.get('valor'))
+
+        voto_existente = VotoComentario.objects.filter(usuario=request.user, comentario=comentario).first()
+        if voto_existente:
+            diferencia = valor - voto_existente.valor
+            comentario.usuario.reputacion += diferencia * 2
+
+            if comentario.usuario.reputacion < 0:
+                comentario.usuario.reputacion = 0
+
+            comentario.usuario.save()
+
+            voto_existente.valor = valor
+            voto_existente.save()
+        else:
+            VotoComentario.objects.create(usuario=request.user, comentario=comentario, valor=valor)
+            comentario.usuario.reputacion += valor * 2
+
+            if comentario.usuario.reputacion < 0:
+                comentario.usuario.reputacion = 0
+
+            comentario.usuario.save()
+
+        return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
+
     return redirect('login')
 
 

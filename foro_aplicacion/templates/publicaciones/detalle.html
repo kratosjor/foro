@@ -1,4 +1,6 @@
 {% extends 'template_base.html' %}
+{% load foro_tags %}
+
 
 {% block title_page %}
     <title>{{ publicacion.titulo }} | Foro</title>
@@ -11,7 +13,7 @@
         <p class="contenido">{{ publicacion.cuerpo }}</p>
         <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
         <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
-        <p class="fecha"><strong>Fecha de publicación:</strong> {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
+        <p class="fecha"><strong>Fecha:</strong> {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
 
         {% if user.is_authenticated %}
         <div class="votos mt-3">
@@ -20,23 +22,19 @@
                 <input type="hidden" name="valor" value="1">
                 <button type="submit" class="btn btn-success btn-sm">👍 Like</button>
             </form>
-
             <form method="post" action="{% url 'crear_voto' publicacion.id %}" style="display:inline;">
                 {% csrf_token %}
                 <input type="hidden" name="valor" value="-1">
                 <button type="submit" class="btn btn-danger btn-sm">👎 Dislike</button>
             </form>
-
-            <p class="mt-2">
-                Likes: {{ likes }} | Dislikes: {{ dislikes }}
-            </p>
+            <p class="mt-2">Likes: {{ likes }} | Dislikes: {{ dislikes }}</p>
         </div>
         {% else %}
             <p class="mt-2">Inicia sesión para votar.</p>
         {% endif %}
     </div>
 
-    <div class="comentarios-section">
+    <div class="comentarios-section mt-5">
         <h2>Comentarios</h2>
 
         {% if user.is_authenticated %}
@@ -49,47 +47,82 @@
             <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
         {% endif %}
 
-        <div class="lista-comentarios">
+        <div class="lista-comentarios mt-4">
         {% for comentario in comentarios %}
-            <div class="comentario-card fade-in">
+            <div class="comentario-card fade-in mb-3">
                 <div class="comentario-header">
                     <strong>{{ comentario.usuario.username }}</strong>
                     <span class="comentario-fecha">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
                 </div>
                 <p class="comentario-texto">{{ comentario.contenido }}</p>
 
-                {% if user.is_authenticated and comentario.usuario == user %}
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarModal{{ comentario.id }}">
-                        Eliminar
-                    </button>
-
-                    <div class="modal fade" id="confirmarModal{{ comentario.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Confirmar eliminación</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    ¿Estás seguro de que deseas eliminar este comentario?
-                                </div>
-                                <div class="modal-footer">
-                                    <form method="post" action="{% url 'eliminar_comentario' comentario.pk %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-                                    </form>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Votos comentario -->
+                {% if user.is_authenticated %}
+                <div class="d-flex gap-2 align-items-center">
+                    <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="valor" value="1">
+                        <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
+                    </form>
+                    <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="valor" value="-1">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
+                    </form>
+                    <span class="text-muted small">Votos: {{ comentario.votos.count }}</span>
+                </div>
                 {% endif %}
+
+                <!-- Responder comentario -->
+                {% if user.is_authenticated %}
+                <button class="btn btn-link btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#respuestaForm{{ comentario.id }}">Responder</button>
+                <div id="respuestaForm{{ comentario.id }}" class="collapse">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="comentario_padre_id" value="{{ comentario.id }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">Enviar respuesta</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <!-- Mostrar respuestas -->
+{% with respuestas_por_comentario|get_item:comentario.id as respuestas %}
+{% if respuestas %}
+    <div class="ms-4 mt-3">
+        {% for respuesta in respuestas %}
+        <div class="comentario-card bg-light p-2 mb-2 rounded">
+            <strong>{{ respuesta.usuario.username }}</strong>
+            <span class="comentario-fecha small">— {{ respuesta.fecha_creacion|date:"d M Y H:i" }}</span>
+            <p class="comentario-texto">{{ respuesta.contenido }}</p>
+
+            {% if user.is_authenticated %}
+            <div class="d-flex gap-2 align-items-center">
+                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="valor" value="1">
+                    <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
+                </form>
+                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="valor" value="-1">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
+                </form>
+                <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+
+
             </div>
         {% empty %}
             <p>No hay comentarios todavía. Sé el primero en opinar.</p>
         {% endfor %}
         </div>
-        
     </div>
 </div>
 
