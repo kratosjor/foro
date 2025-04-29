@@ -64,9 +64,13 @@ class Comentario(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='comentarios')
     contenido = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    comentario_padre = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='respuestas')
 
     def __str__(self):
+        if self.comentario_padre:
+            return f"{self.usuario.username} respondió a un comentario en '{self.publicacion.titulo}'"
         return f"{self.usuario.username} comentó en '{self.publicacion.titulo}'"
+
 
 
 ######################
@@ -91,6 +95,31 @@ class Voto(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} votó {self.get_valor_display()} en '{self.publicacion.titulo}'"
+
+
+######################
+# Voto COMENTARIO
+######################
+
+class VotoComentario(models.Model):
+    LIKE = 1
+    DISLIKE = -1
+    VOTO_CHOICES = (
+        (LIKE, 'Like'),
+        (DISLIKE, 'Dislike'),
+    )
+
+    comentario = models.ForeignKey('Comentario', on_delete=models.CASCADE, related_name='votos')
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='votos_comentarios')
+    valor = models.IntegerField(choices=VOTO_CHOICES)
+
+    class Meta:
+        unique_together = ('comentario', 'usuario')
+        verbose_name = 'Voto en comentario'
+        verbose_name_plural = 'Votos en comentarios'
+
+    def __str__(self):
+        return f"{self.usuario.username} votó {self.get_valor_display()} en el comentario '{self.comentario.contenido[:20]}'"
 
 
 ######################
