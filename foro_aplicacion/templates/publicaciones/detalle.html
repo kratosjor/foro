@@ -1,6 +1,6 @@
 {% extends 'template_base.html' %}
 {% load foro_tags %}
-
+{% load static %}
 
 {% block title_page %}
     <title>{{ publicacion.titulo }} | Foro</title>
@@ -38,23 +38,44 @@
         <h2>Comentarios</h2>
 
         {% if user.is_authenticated %}
-            <form method="post" class="formulario-comentario">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Comentar</button>
-            </form>
+        <form method="post" class="formulario-comentario">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <!-- Emoji panel para comentario -->
+            <div class="emoji-panel mb-2">
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'id_contenido')">😊</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'id_contenido')">😂</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'id_contenido')">😢</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'id_contenido')">👍</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'id_contenido')">🔥</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Comentar</button>
+        </form>
+
+        <!-- Botón para abrir el selector de GIFs -->
+        <button class="btn btn-secondary mt-2" id="openGifSelectorBtn">Añadir GIF</button>
+        <!-- Modal o selector de GIFs -->
+        <div id="gifSelector" class="gif-selector" style="display:none;">
+            <input type="text" id="gifSearchInput" placeholder="Buscar GIFs...">
+            <div id="gifResults"></div>
+        </div>
         {% else %}
             <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
         {% endif %}
 
+
         <div class="lista-comentarios mt-4">
         {% for comentario in comentarios %}
             <div class="comentario-card fade-in mb-3">
-                <div class="comentario-header">
+                <div class="comentario-header" style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{{ comentario.usuario.avatar_url }}" alt="Avatar" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
                     <strong>{{ comentario.usuario.username }}</strong>
-                    <span class="comentario-fecha">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
+                    <span class="comentario-fecha" style="margin-left: auto;">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
                 </div>
-                <p class="comentario-texto">{{ comentario.contenido }}</p>
+                
+                <p class="comentario-texto">{{ comentario.contenido|safe }}</p>
 
                 <!-- Votos comentario -->
                 {% if user.is_authenticated %}
@@ -73,13 +94,29 @@
                 </div>
                 {% endif %}
 
-                <!-- Responder comentario -->
                 {% if user.is_authenticated %}
                 <button class="btn btn-link btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#respuestaForm{{ comentario.id }}">Responder</button>
                 <div id="respuestaForm{{ comentario.id }}" class="collapse">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <textarea name="contenido" id="respuesta_textarea_{{ comentario.id }}" rows="3" class="form-control" required></textarea>
+
+                        <!-- Emoji panel en respuestas -->
+                        <div class="emoji-panel mb-2">
+                            <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'respuesta_textarea_{{ comentario.id }}')">😊</button>
+                            <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'respuesta_textarea_{{ comentario.id }}')">😂</button>
+                            <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'respuesta_textarea_{{ comentario.id }}')">😢</button>
+                            <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'respuesta_textarea_{{ comentario.id }}')">👍</button>
+                            <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'respuesta_textarea_{{ comentario.id }}')">🔥</button>
+                        </div>
+
+                        <!-- Selector de GIFs para respuesta -->
+                        <button class="btn btn-secondary mt-2" type="button" onclick="toggleGifSelector('{{ comentario.id }}')">Añadir GIF</button>
+                        <div id="gifSelector{{ comentario.id }}" class="gif-selector" style="display:none;">
+                            <input type="text" id="gifSearchInput{{ comentario.id }}" placeholder="Buscar GIFs...">
+                            <div id="gifResults{{ comentario.id }}"></div>
+                        </div>
+
                         <input type="hidden" name="comentario_padre_id" value="{{ comentario.id }}">
                         <button type="submit" class="btn btn-secondary btn-sm">Enviar respuesta</button>
                     </form>
@@ -87,37 +124,37 @@
                 {% endif %}
 
                 <!-- Mostrar respuestas -->
-{% with respuestas_por_comentario|get_item:comentario.id as respuestas %}
-{% if respuestas %}
-    <div class="ms-4 mt-3">
-        {% for respuesta in respuestas %}
-        <div class="comentario-card bg-light p-2 mb-2 rounded">
-            <strong>{{ respuesta.usuario.username }}</strong>
-            <span class="comentario-fecha small">— {{ respuesta.fecha_creacion|date:"d M Y H:i" }}</span>
-            <p class="comentario-texto">{{ respuesta.contenido }}</p>
+                {% with respuestas_por_comentario|get_item:comentario.id as respuestas %}
+                {% if respuestas %}
+                    <div class="ms-4 mt-3">
+                        {% for respuesta in respuestas %}
+                        <div class="comentario-card bg-light p-2 mb-2 rounded">
+                            <strong>{{ respuesta.usuario.username }}</strong>
+                            <img src="{{ respuesta.usuario.avatar_url }}" alt="Avatar" style="max-width: 50px;" class="img-thumbnail">
 
-            {% if user.is_authenticated %}
-            <div class="d-flex gap-2 align-items-center">
-                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="valor" value="1">
-                    <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
-                </form>
-                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="valor" value="-1">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
-                </form>
-                <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
-            </div>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
-{% endif %}
-{% endwith %}
+                            <span class="comentario-fecha small">— {{ respuesta.fecha_creacion|date:"d M Y H:i" }}</span>
+                            <p class="comentario-texto">{{ respuesta.contenido|safe }}</p>
 
-
+                            {% if user.is_authenticated %}
+                            <div class="d-flex gap-2 align-items-center">
+                                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="valor" value="1">
+                                    <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
+                                </form>
+                                <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="valor" value="-1">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
+                                </form>
+                                <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
             </div>
         {% empty %}
             <p>No hay comentarios todavía. Sé el primero en opinar.</p>
@@ -126,6 +163,56 @@
     </div>
 </div>
 
+<!-- Scripts para el selector de GIFs -->
+<script>
+    function toggleGifSelector(commentId) {
+        const selector = document.getElementById(`gifSelector${commentId}`);
+        selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+    }
+
+    document.querySelectorAll('input[id^="gifSearchInput"]').forEach(input => {
+        input.addEventListener('input', function() {
+            const commentId = this.id.replace('gifSearchInput', '');
+            const query = this.value;
+            if (query.length < 2) return;
+
+            const apiKey = 'T0maKZS4aMkwk0iRCRS4fEhyLO473rkp';
+            fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=6`)
+                .then(response => response.json())
+                .then(data => {
+                    const gifResults = document.getElementById(`gifResults${commentId}`);
+                    gifResults.innerHTML = '';
+
+                    data.data.forEach(gif => {
+                        const img = document.createElement('img');
+                        img.src = gif.images.fixed_height_small.url;
+                        img.alt = gif.title;
+                        img.style.maxWidth = '120px';
+                        img.style.cursor = 'pointer';
+                        img.classList.add('me-2', 'mb-2');
+
+                        img.addEventListener('click', () => {
+                            const textarea = document.getElementById(`respuesta_textarea_${commentId}`);
+                            textarea.value += `\n<img src="${gif.images.fixed_height.url}" alt="gif">`;
+                            document.getElementById(`gifSelector${commentId}`).style.display = 'none';
+                        });
+
+                        gifResults.appendChild(img);
+                    });
+                });
+        });
+    });
+
+    function insertEmoji(emoji, textareaId) {
+        const textarea = document.getElementById(textareaId);
+        if (textarea) {
+            textarea.value += emoji;
+            textarea.focus();
+        }
+    }
+</script>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}

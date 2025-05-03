@@ -1022,3 +1022,123 @@ h2 {
 .btn-detalle:hover {
     background-color: #0072ff;
 }
+
+/*SUBIR IMAGEN*/
+.perfil-upload-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-upload-container h2 {
+    font-weight: bold;
+    color: #343a40;
+    text-align: center;
+}
+
+.perfil-label {
+    font-weight: 500;
+}
+
+.perfil-upload-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.perfil-upload-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #003d80);
+}
+
+.perfil-avatar-preview {
+    text-align: center;
+}
+
+.perfil-avatar-preview img {
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    margin-top: 1rem;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+/*EMOJIS*/
+/* Estilo para los emojis */
+.emoji-panel {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.emoji-btn {
+    font-size: 22px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.emoji-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Estilo para los GIFs insertados en los comentarios */
+.comentario-texto img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.comentario-texto img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+}
+/*ANUNCION/
+/* Estilo para el anuncio izquierdo */
+.ad-left {
+    position: fixed; /* Fija el anuncio en la pantalla */
+    top: 80px; /* Ajusta la distancia para que no se sobreponga con el navbar */
+    left: 0; /* Lo alinea a la izquierda */
+    transform: translateY(0); /* Ajusta la posición vertical para que se alinee correctamente */
+    width: 300px; /* Ajusta el tamaño del anuncio */
+    height: auto;
+    z-index: 1000; /* Asegura que el anuncio quede por encima de otros elementos */
+}
+
+/* Estilo para el anuncio derecho */
+.ad-right {
+    position: fixed; /* Fija el anuncio en la pantalla */
+    top: 80px; /* Ajusta la distancia para que no se sobreponga con el navbar */
+    right: 0; /* Alinea el anuncio al borde derecho */
+    transform: translateY(0); /* Ajusta la posición vertical */
+    width: 300px; /* Ajusta el tamaño del anuncio */
+    height: auto;
+    z-index: 1000; /* Asegura que el anuncio quede por encima de otros elementos */
+    margin-right: -60px;
+    
+}
+
+/* Aseguramos que las imágenes de los anuncios se ajusten bien */
+.ad-left img, .ad-right img {
+    width: 80%; /* La imagen ocupará el 100% del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+}

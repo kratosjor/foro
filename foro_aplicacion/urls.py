@@ -35,6 +35,7 @@ urlpatterns = [
     
     #perfil
     path('perfil/<int:usuario_id>/', perfil_usuario, name='perfil_usuario'),
+    path('perfil/subir_imagen/', subir_imagen, name='subir_imagen'),
 
 
 ]

@@ -8,7 +8,7 @@ from .models import *
 class RegistroUsuarioForm(UserCreationForm):
     class Meta:
         model = Usuario
-        fields = ['username', 'correo', 'password1', 'password2']
+        fields = ['username', 'correo', 'password1', 'password2','avatar']
 
 ######################
 # Edición de Usuario (Admin/Moderador)

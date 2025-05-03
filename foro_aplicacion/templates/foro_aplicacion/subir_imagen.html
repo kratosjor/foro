@@ -1,0 +1,31 @@
+{% extends 'template_base.html' %}
+
+{% block title_page %}
+<title>Subir Imagen de Perfil</title>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="perfil-upload-container">
+        <h2>Subir Imagen de Perfil</h2>
+
+        <form method="post" enctype="multipart/form-data" class="mt-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_avatar" class="form-label perfil-label">Selecciona una imagen</label>
+                <input type="file" name="avatar" accept="image/*" class="form-control" id="id_avatar" required>
+            </div>
+
+            <button type="submit" class="perfil-upload-btn">Subir Imagen</button>
+        </form>
+
+        {% if user.avatar %}
+        <div class="perfil-avatar-preview">
+            <p class="mt-4">Tu imagen actual:</p>
+            <img src="{{ user.avatar.url }}" alt="Avatar actual">
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

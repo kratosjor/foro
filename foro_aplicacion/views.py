@@ -14,6 +14,8 @@ from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
 from django.core.paginator import Paginator
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -371,3 +373,18 @@ def perfil_usuario(request, usuario_id):
     })
 
 
+######################
+# VISTA SUBIR FOTO DE PERFIL
+#####################
+
+@login_required
+def subir_imagen(request):
+    usuario = request.user
+
+    if request.method == 'POST' and 'avatar' in request.FILES:
+        usuario.avatar = request.FILES['avatar']
+        usuario.save()
+        messages.success(request, "Imagen de perfil actualizada correctamente.")
+        return redirect('perfil_usuario', usuario_id=usuario.id)
+
+    return render(request, 'foro_aplicacion/subir_imagen.html')

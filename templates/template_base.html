@@ -8,7 +8,6 @@
         <title>Foro</title>
     {% endblock title_page %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-
 </head>
 <body>
 
@@ -25,13 +24,11 @@
             {% else %}
                 <a href="{% url 'login' %}">Iniciar sesión</a>
             {% endif %}
-            
         </div>
         
         {% if user.is_authenticated %}
         <div class="nav-right">
             <form method="post" action="{% url 'logout' %}">
-                
                 {% csrf_token %}
                 <button type="submit" class="logout-button">Cerrar sesión</button>
             </form>
@@ -41,9 +38,18 @@
     </nav>
     {% endblock navbar %}
 
-    
+    <!-- Contenedores de publicidad (fuera del área del navbar) -->
+     
+    <div class="ad-left">
+        <!-- Aquí agregas el código del anuncio que quieres mostrar -->
+      <!--  <img src="{% static "images/banner01.jpg" %}" alt="Anuncio izquierdo">-->
+    </div>
 
-    <!-- Cuerpo -->
+    <div class="ad-right">
+        <!-- Aquí agregas el código del anuncio que quieres mostrar -->
+       <!--  <img src="{% static "images/banner02.jpg" %}" alt="Anuncio derecho">-->
+    </div>
+
     <main>
         {% block body %}
         <p>oli</p>

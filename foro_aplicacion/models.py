@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.templatetags.static import static
+
 
 ######################
 # Usuario personalizado
@@ -11,10 +13,18 @@ class Usuario(AbstractUser):
     es_moderador = models.BooleanField(default=False)
     es_autor = models.BooleanField(default=False)
     reputacion = models.IntegerField(default=0)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
+        
+    @property
+    def avatar_url(self):
+        # Si no hay avatar, usar una imagen predeterminada en static
+        if not self.avatar:
+            return static('assets/img/default_avatar.png')
+        return self.avatar.url
 
 
 ######################
