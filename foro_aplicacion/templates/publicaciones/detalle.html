@@ -94,7 +94,7 @@
                     <span class="text-muted small">Votos: {{ comentario.votos.count }}</span>
                 </div>
 
-                {% if user == comentario.usuario %}
+                {% if user == comentario.usuario or user.es_admin %}
                 <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" class="mt-2">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
@@ -152,7 +152,7 @@
                             <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
                         </div>
 
-                        {% if user == respuesta.usuario %}
+                        {% if user == respuesta.usuario or user.es_admin %}
                         <form method="post" action="{% url 'eliminar_comentario' comentario.pk %}" class="mt-2">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
