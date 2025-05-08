@@ -16,6 +16,7 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 def home(request):
@@ -227,7 +228,18 @@ class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
     
     def get_success_url(self):
         return reverse('listar_publicaciones')
+    
+    
+######################
+# VISTA EDITAR PUBLICACION
+######################
 
+class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Publicacion
+    template_name = 'publicaciones/editar_publicacion.html'
+    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas']
+    def get_success_url(self):
+        return reverse_lazy('detalle_publicacion', kwargs={'pk': self.object.pk})
 
 
 ######################
@@ -388,3 +400,18 @@ def subir_imagen(request):
         return redirect('perfil_usuario', usuario_id=usuario.id)
 
     return render(request, 'foro_aplicacion/subir_imagen.html')
+
+######################
+# VISTA ELIMINAR COMENTARIO
+#####################
+
+class ComentarioDeleteView(LoginRequiredMixin, View):
+    @method_decorator(login_required)
+    def post(self, request, pk):
+        comentario = get_object_or_404(Comentario, pk=pk)
+        
+        # Verifica si el usuario es el autor o es admin
+        if comentario.usuario == request.user or request.user.es_admin:
+            comentario.delete()
+        
+        return redirect('detalle_publicacion', pk=comentario.publicacion.pk)

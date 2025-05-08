@@ -1142,3 +1142,15 @@ h2 {
     width: 80%; /* La imagen ocupará el 100% del contenedor */
     height: auto; /* Mantiene la proporción de la imagen */
 }
+/*EDITAR PUBLICACION BOTON*/
+.btn-warning {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: white;
+}

@@ -22,6 +22,8 @@ urlpatterns = [
     path('comentario/<int:pk>/eliminar/', EliminarComentarioView.as_view(), name='eliminar_comentario'),
     path('publicaciones/eliminar_publicacion/<int:pk>/', EliminarPublicacionView.as_view(), name='eliminar_publicacion'),
     path('publicaciones/categoria/<int:categoria_id>/', publicaciones_por_categoria, name='publicaciones_por_categoria'),
+    path('publicaciones/editar_publicacion/<int:pk>/', PublicacionUpdateView.as_view(), name='editar_publicacion'),
+    path('publicaciones/eliminar_comentario/<int:pk>/', ComentarioDeleteView.as_view(), name='eliminar_comentario'),
 
     #usuarios
     path('lista_usuarios/', lista_usuarios, name='lista_usuarios'),

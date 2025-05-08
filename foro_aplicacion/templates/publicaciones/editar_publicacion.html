@@ -1,0 +1,33 @@
+{% extends 'template_base.html' %}
+{% load static %}
+
+{% block title_page %}
+    <title>Editar Publicación | Foro</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="titulo">Editar Nueva Publicación</h1>
+    <form method="post" class="formulario-publicacion">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_titulo">Título</label>
+            {{ form.titulo }}
+        </div>
+        <div class="form-group">
+            <label for="id_cuerpo">Cuerpo</label>
+            {{ form.cuerpo }}
+        </div>
+        <div class="form-group">
+            <label for="id_categoria">Categoría</label>
+            {{ form.categoria }}
+        </div>
+        <div class="form-group">
+            <label for="id_etiquetas">Etiquetas</label>
+            {{ form.etiquetas }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Guardar Publicación</button>
+    </form>
+</div>
+{% endblock %}
