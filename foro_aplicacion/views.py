@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.core.exceptions import PermissionDenied
 
 
 def home(request):
@@ -415,3 +416,23 @@ class ComentarioDeleteView(LoginRequiredMixin, View):
             comentario.delete()
         
         return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
+    
+######################
+# VISTA EDITAR COMENTARIO
+#####################
+
+@login_required
+def editar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+
+    if request.user != comentario.usuario and not request.user.es_admin:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        nuevo_contenido = request.POST.get('contenido', '').strip()
+        if nuevo_contenido:
+            comentario.contenido = nuevo_contenido
+            comentario.save()
+
+    # Redirige al detalle de la publicación usando reverse()
+    return redirect('detalle_publicacion', pk=comentario.publicacion.pk)

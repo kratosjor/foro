@@ -24,6 +24,8 @@ urlpatterns = [
     path('publicaciones/categoria/<int:categoria_id>/', publicaciones_por_categoria, name='publicaciones_por_categoria'),
     path('publicaciones/editar_publicacion/<int:pk>/', PublicacionUpdateView.as_view(), name='editar_publicacion'),
     path('publicaciones/eliminar_comentario/<int:pk>/', ComentarioDeleteView.as_view(), name='eliminar_comentario'),
+    path('comentarios/<int:pk>/editar/', editar_comentario, name='editar_comentario'),
+
 
     #usuarios
     path('lista_usuarios/', lista_usuarios, name='lista_usuarios'),

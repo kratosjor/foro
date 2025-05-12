@@ -40,136 +40,130 @@
     </div>
     {% endif %}
 
-    <div class="comentarios-section mt-5">
-        <h2>Comentarios</h2>
+    <div class="lista-comentarios mt-4">
+    {% for comentario in comentarios %}
+        <div class="comentario-card fade-in mb-3">
+            <div class="comentario-header d-flex align-items-center gap-2">
+                <img src="{{ comentario.usuario.avatar_url }}" alt="Avatar" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                <strong>{{ comentario.usuario.username }}</strong>
+                <span class="comentario-fecha ms-auto">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
+            </div>
+            
+            <p class="comentario-texto">{{ comentario.contenido|safe }}</p>
 
-        {% if user.is_authenticated %}
-        <form method="post" class="formulario-comentario">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <div class="emoji-panel mb-2">
-                <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'id_contenido')">😊</button>
-                <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'id_contenido')">😂</button>
-                <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'id_contenido')">😢</button>
-                <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'id_contenido')">👍</button>
-                <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'id_contenido')">🔥</button>
+            {% if user.is_authenticated %}
+            <div class="d-flex gap-2 align-items-center">
+                <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="valor" value="1">
+                    <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
+                </form>
+                <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="valor" value="-1">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
+                </form>
+                <span class="text-muted small">Votos: {{ comentario.votos.count }}</span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Comentar</button>
-        </form>
-
-        <button class="btn btn-secondary mt-2" id="openGifSelectorBtn">Añadir GIF</button>
-        <div id="gifSelector" class="gif-selector" style="display:none;">
-            <input type="text" id="gifSearchInput" placeholder="Buscar GIFs...">
-            <div id="gifResults"></div>
-        </div>
-        {% else %}
-            <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
-        {% endif %}
-
-        <div class="lista-comentarios mt-4">
-        {% for comentario in comentarios %}
-            <div class="comentario-card fade-in mb-3">
-                <div class="comentario-header d-flex align-items-center gap-2">
-                    <img src="{{ comentario.usuario.avatar_url }}" alt="Avatar" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
-                    <strong>{{ comentario.usuario.username }}</strong>
-                    <span class="comentario-fecha ms-auto">— {{ comentario.fecha_creacion|date:"d M Y H:i" }}</span>
-                </div>
-                
-                <p class="comentario-texto">{{ comentario.contenido|safe }}</p>
-
-                {% if user.is_authenticated %}
-                <div class="d-flex gap-2 align-items-center">
-                    <form method="post" action="{% url 'votar_comentario' comentario.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="valor" value="1">
-                        <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
-                    </form>
-                    <form method="post" action="{% url 'votar_comentario' comentario.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="valor" value="-1">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
-                    </form>
-                    <span class="text-muted small">Votos: {{ comentario.votos.count }}</span>
-                </div>
-
-                {% if user == comentario.usuario or user.es_admin %}
-                <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" class="mt-2">
+            {% if user == comentario.usuario or user.es_admin %}
+            <div class="d-flex gap-2 align-items-center mt-2">
+                <form method="post" action="{% url 'eliminar_comentario' comentario.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
                 </form>
-                {% endif %}
+                <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#editarComentario{{ comentario.id }}">✏️ Editar</button>
+            </div>
 
-                <button class="btn btn-link btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#respuestaForm{{ comentario.id }}">Responder</button>
-                <div id="respuestaForm{{ comentario.id }}" class="collapse">
-                    <form method="post">
-                        {% csrf_token %}
-                        <textarea name="contenido" id="respuesta_textarea_{{ comentario.id }}" rows="3" class="form-control" required></textarea>
+            <div class="collapse mt-2" id="editarComentario{{ comentario.id }}">
+                <form method="post" action="{% url 'editar_comentario' comentario.id %}">
+                    {% csrf_token %}
+                    <textarea name="contenido" rows="3" class="form-control">{{ comentario.contenido }}</textarea>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Guardar cambios</button>
+                </form>
+            </div>
+            {% endif %}
 
-                        <div class="emoji-panel mb-2">
-                            <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'respuesta_textarea_{{ comentario.id }}')">😊</button>
-                            <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'respuesta_textarea_{{ comentario.id }}')">😂</button>
-                            <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'respuesta_textarea_{{ comentario.id }}')">😢</button>
-                            <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'respuesta_textarea_{{ comentario.id }}')">👍</button>
-                            <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'respuesta_textarea_{{ comentario.id }}')">🔥</button>
-                        </div>
+            <button class="btn btn-link btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#respuestaForm{{ comentario.id }}">Responder</button>
+            <div id="respuestaForm{{ comentario.id }}" class="collapse">
+                <form method="post">
+                    {% csrf_token %}
+                    <textarea name="contenido" id="respuesta_textarea_{{ comentario.id }}" rows="3" class="form-control" required></textarea>
 
-                        <button class="btn btn-secondary mt-2" type="button" onclick="toggleGifSelector('{{ comentario.id }}')">Añadir GIF</button>
-                        <div id="gifSelector{{ comentario.id }}" class="gif-selector" style="display:none;">
-                            <input type="text" id="gifSearchInput{{ comentario.id }}" placeholder="Buscar GIFs...">
-                            <div id="gifResults{{ comentario.id }}"></div>
-                        </div>
+                    <div class="emoji-panel mb-2">
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'respuesta_textarea_{{ comentario.id }}')">😊</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'respuesta_textarea_{{ comentario.id }}')">😂</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'respuesta_textarea_{{ comentario.id }}')">😢</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'respuesta_textarea_{{ comentario.id }}')">👍</button>
+                        <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'respuesta_textarea_{{ comentario.id }}')">🔥</button>
+                    </div>
 
-                        <input type="hidden" name="comentario_padre_id" value="{{ comentario.id }}">
-                        <button type="submit" class="btn btn-secondary btn-sm">Enviar respuesta</button>
-                    </form>
-                </div>
-                {% endif %}
+                    <button class="btn btn-secondary mt-2" type="button" onclick="toggleGifSelector('{{ comentario.id }}')">Añadir GIF</button>
+                    <div id="gifSelector{{ comentario.id }}" class="gif-selector" style="display:none;">
+                        <input type="text" id="gifSearchInput{{ comentario.id }}" placeholder="Buscar GIFs...">
+                        <div id="gifResults{{ comentario.id }}"></div>
+                    </div>
 
-                {% with respuestas_por_comentario|get_item:comentario.id as respuestas %}
-                {% if respuestas %}
-                <div class="ms-4 mt-3">
-                    {% for respuesta in respuestas %}
-                    <div class="comentario-card bg-light p-2 mb-2 rounded">
-                        <strong>{{ respuesta.usuario.username }}</strong>
-                        <img src="{{ respuesta.usuario.avatar_url }}" alt="Avatar" style="max-width: 50px;" class="img-thumbnail">
-                        <span class="comentario-fecha small">— {{ respuesta.fecha_creacion|date:"d M Y H:i" }}</span>
-                        <p class="comentario-texto">{{ respuesta.contenido|safe }}</p>
+                    <input type="hidden" name="comentario_padre_id" value="{{ comentario.id }}">
+                    <button type="submit" class="btn btn-secondary btn-sm">Enviar respuesta</button>
+                </form>
+            </div>
+            {% endif %}
 
-                        {% if user.is_authenticated %}
-                        <div class="d-flex gap-2 align-items-center">
-                            <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="valor" value="1">
-                                <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
-                            </form>
-                            <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="valor" value="-1">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
-                            </form>
-                            <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
-                        </div>
+            {% with respuestas_por_comentario|get_item:comentario.id as respuestas %}
+            {% if respuestas %}
+            <div class="ms-4 mt-3">
+                {% for respuesta in respuestas %}
+                <div class="comentario-card bg-light p-2 mb-2 rounded">
+                    <strong>{{ respuesta.usuario.username }}</strong>
+                    <img src="{{ respuesta.usuario.avatar_url }}" alt="Avatar" style="max-width: 50px;" class="img-thumbnail">
+                    <span class="comentario-fecha small">— {{ respuesta.fecha_creacion|date:"d M Y H:i" }}</span>
+                    <p class="comentario-texto">{{ respuesta.contenido|safe }}</p>
 
-                        {% if user == respuesta.usuario or user.es_admin %}
-                        <form method="post" action="{% url 'eliminar_comentario' comentario.pk %}" class="mt-2">
+                    {% if user.is_authenticated %}
+                    <div class="d-flex gap-2 align-items-center">
+                        <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="valor" value="1">
+                            <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
+                        </form>
+                        <form method="post" action="{% url 'votar_comentario' respuesta.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="valor" value="-1">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
+                        </form>
+                        <span class="text-muted small">Votos: {{ respuesta.votos.count }}</span>
+                    </div>
+
+                    {% if user == respuesta.usuario or user.es_admin %}
+                    <div class="d-flex gap-2 align-items-center mt-2">
+                        <form method="post" action="{% url 'eliminar_comentario' respuesta.id %}" class="mt-2">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
                         </form>
-                        {% endif %}
-                        {% endif %}
+                        <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#editarComentario{{ respuesta.id }}">✏️ Editar</button>
                     </div>
-                    {% endfor %}
+
+                    <div class="collapse mt-2" id="editarComentario{{ respuesta.id }}">
+                        <form method="post" action="{% url 'editar_comentario' respuesta.id %}">
+                            {% csrf_token %}
+                            <textarea name="contenido" rows="3" class="form-control">{{ respuesta.contenido }}</textarea>
+                            <button type="submit" class="btn btn-primary btn-sm mt-2">Guardar cambios</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    {% endif %}
                 </div>
-                {% endif %}
-                {% endwith %}
+                {% endfor %}
             </div>
-        {% empty %}
-            <p>No hay comentarios todavía. Sé el primero en opinar.</p>
-        {% endfor %}
+            {% endif %}
+            {% endwith %}
         </div>
-    </div>
+    {% empty %}
+        <p>No hay comentarios todavía. Sé el primero en opinar.</p>
+    {% endfor %}
+</div>
+
 </div>
 
 <script>
@@ -223,3 +217,5 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
+
+
