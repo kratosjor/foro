@@ -39,6 +39,34 @@
         <a href="{% url 'editar_publicacion' pk=object.pk %}" class="btn btn-warning btn-sm">✏️ Editar Publicación</a>
     </div>
     {% endif %}
+    <div class="comentarios-section mt-5">
+        <h2>Comentarios</h2>
+
+        {% if user.is_authenticated %}
+        <form method="post" class="formulario-comentario">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="emoji-panel mb-2">
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😊', 'id_contenido')">😊</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😂', 'id_contenido')">😂</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('😢', 'id_contenido')">😢</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('👍', 'id_contenido')">👍</button>
+                <button type="button" class="emoji-btn" onclick="insertEmoji('🔥', 'id_contenido')">🔥</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Comentar</button>
+            
+        </form>
+
+        <button class="btn btn-secondary mt-2" id="openGifSelectorBtn">Añadir GIF</button>
+        <div id="gifSelector" class="gif-selector" style="display:none;">
+            <input type="text" id="gifSearchInput" placeholder="Buscar GIFs...">
+            <div id="gifResults"></div>
+        </div>
+        {% else %}
+            <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+        {% endif %}
 
     <div class="lista-comentarios mt-4">
     {% for comentario in comentarios %}
