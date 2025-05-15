@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.templatetags.static import static
+from django.utils import timezone
+from django.urls import reverse
 
 
 ######################
@@ -64,6 +66,9 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+    def get_absolute_url(self):
+        return reverse('detalle_publicacion', kwargs={'pk': self.pk})
 
 
 ######################
@@ -146,3 +151,28 @@ class PublicacionEtiqueta(models.Model):
 
     def __str__(self):
         return f"{self.publicacion.titulo} - {self.etiqueta.nombre}"
+
+
+######################
+# NOTIFICACIONES
+######################
+
+class Notificacion(models.Model):
+    TIPO_CHOICES =[
+        ('like','Like a tu publicación'),
+        ('dislike','Dislike a tu publicación'),
+        ('comentario','Comentario en tu publicación'),
+        ('respuesta','Respuesta a tu comentario'),
+        
+    ]
+    
+    destinatario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='notificaciones')
+    emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='acciones_realizadas')
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    mensaje = models.TextField()
+    url = models.URLField()
+    leida = models.BooleanField(default=False)  
+    fecha = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f"{self.emisor} → {self.destinatario} ({self.tipo})"

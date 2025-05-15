@@ -40,6 +40,11 @@ urlpatterns = [
     #perfil
     path('perfil/<int:usuario_id>/', perfil_usuario, name='perfil_usuario'),
     path('perfil/subir_imagen/', subir_imagen, name='subir_imagen'),
+    
+    #notificaciones
+    path('notificaciones/', ver_notificaciones, name='ver_notificaciones'),
+    path('comentario/<int:comentario_id>/votar/<int:pk>/', votar_comentario, name='votar_comentario'),
+
 
 
 ]

@@ -1154,3 +1154,76 @@ h2 {
     border-color: #d39e00;
     color: white;
 }
+/*NOTIFICACIONES*/
+/* Estilo distintivo para la página de notificaciones */
+
+.notificaciones-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.notificaciones-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+    position: relative;
+}
+
+.notificaciones-container h2::after {
+    content: "📨";
+    position: absolute;
+    right: 10px;
+    font-size: 1.6rem;
+}
+
+.noti-item {
+    background: #f9f9fb;
+    padding: 15px 20px;
+    border-left: 6px solid transparent;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.noti-item.unread {
+    background-color: #fff7e6;
+    border-left-color: #f39c12;
+}
+
+.noti-item:hover {
+    transform: translateX(5px);
+    background-color: #f0f0f0;
+}
+
+.noti-item a {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.noti-item small {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 6px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

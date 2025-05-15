@@ -142,12 +142,17 @@ class PublicacionDetailView(FormMixin, DetailView):
         context = super().get_context_data(**kwargs)
         publicacion = self.get_object()
 
-        # Comentarios principales (sin padre)
-        comentarios = Comentario.objects.filter(publicacion=publicacion, comentario_padre__isnull=True).order_by('fecha_creacion')
+        # Comentarios principales
+        comentarios = Comentario.objects.filter(
+            publicacion=publicacion, comentario_padre__isnull=True
+        ).order_by('fecha_creacion')
         context['comentarios'] = comentarios
 
-        # Diccionario de respuestas por ID
-        respuestas = Comentario.objects.filter(publicacion=publicacion, comentario_padre__isnull=False).order_by('fecha_creacion')
+        # Respuestas organizadas por comentario padre
+        respuestas = Comentario.objects.filter(
+            publicacion=publicacion, comentario_padre__isnull=False
+        ).order_by('fecha_creacion')
+
         respuestas_por_comentario = {}
         for respuesta in respuestas:
             padre_id = respuesta.comentario_padre_id
@@ -155,11 +160,11 @@ class PublicacionDetailView(FormMixin, DetailView):
 
         context['respuestas_por_comentario'] = respuestas_por_comentario
 
-        # Likes y Dislikes de la publicación
+        # Likes y dislikes
         context['likes'] = publicacion.votos.filter(valor=1).count()
         context['dislikes'] = publicacion.votos.filter(valor=-1).count()
 
-        # Formulario de comentario
+        # Formulario
         if 'form' not in context:
             context['form'] = self.get_form()
 
@@ -177,19 +182,41 @@ class PublicacionDetailView(FormMixin, DetailView):
             comentario.usuario = request.user
             comentario.publicacion = self.object
 
-            # Verifica si es respuesta a otro comentario
             padre_id = request.POST.get('comentario_padre_id')
             if padre_id:
                 try:
                     padre = Comentario.objects.get(pk=padre_id)
                     comentario.comentario_padre = padre
-                except Comentario.DoesNotExist:
-                    pass  # ignora si no existe
+                    comentario.save()
 
-            comentario.save()
+                    # Notificar al autor del comentario padre (respuesta)
+                    if padre.usuario != request.user:
+                        Notificacion.objects.create(
+                            destinatario=padre.usuario,
+                            emisor=request.user,
+                            tipo='respuesta',
+                            mensaje=f"{request.user.username} respondió a tu comentario en '{self.object.titulo}'",
+                            url=request.build_absolute_uri(self.object.get_absolute_url())
+                        )
+                except Comentario.DoesNotExist:
+                    comentario.save()  # guarda sin padre si hubo error
+            else:
+                comentario.save()
+
+                # Notificar al autor de la publicación (nuevo comentario)
+                if self.object.usuario != request.user:
+                    Notificacion.objects.create(
+                        destinatario=self.object.usuario,
+                        emisor=request.user,
+                        tipo='comentario',
+                        mensaje=f"{request.user.username} comentó en tu publicación '{self.object.titulo}'",
+                        url=request.build_absolute_uri(self.object.get_absolute_url())
+                    )
+
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
+
 
 ######################
 # VISTA ELIMINAR COMENTARIO 
@@ -257,7 +284,6 @@ def crear_voto(request, pk):
             diferencia = valor - voto_existente.valor
             publicacion.usuario.reputacion += diferencia * 5
 
-            # No permitir reputación negativa
             if publicacion.usuario.reputacion < 0:
                 publicacion.usuario.reputacion = 0
 
@@ -265,19 +291,30 @@ def crear_voto(request, pk):
 
             voto_existente.valor = valor
             voto_existente.save()
+
         else:
             Voto.objects.create(usuario=request.user, publicacion=publicacion, valor=valor)
 
             publicacion.usuario.reputacion += valor * 5
 
-            # No permitir reputación negativa
             if publicacion.usuario.reputacion < 0:
                 publicacion.usuario.reputacion = 0
 
             publicacion.usuario.save()
 
+        # Crear notificación solo si no es el autor quien vota
+        if request.user != publicacion.usuario:
+            tipo = 'like' if valor == 1 else 'dislike'
+            Notificacion.objects.create(
+                destinatario=publicacion.usuario,
+                emisor=request.user,
+                tipo=tipo,
+                mensaje=f"{request.user.username} ha dado un {tipo} a tu publicación '{publicacion.titulo}'",
+                url=request.build_absolute_uri(publicacion.get_absolute_url())
+            )
+
         return redirect('detalle_publicacion', pk=pk)
-    
+
     return redirect('login')
 
 
@@ -285,33 +322,40 @@ def crear_voto(request, pk):
 # VISTA votar COMENTARIO
 ######################
 
-def votar_comentario(request, comentario_id):
-    if request.method == 'POST' and request.user.is_authenticated:
+@login_required
+def votar_comentario(request, comentario_id, pk):
+    if request.method == 'POST':
         comentario = get_object_or_404(Comentario, pk=comentario_id)
         valor = int(request.POST.get('valor'))
 
         voto_existente = VotoComentario.objects.filter(usuario=request.user, comentario=comentario).first()
+
         if voto_existente:
             diferencia = valor - voto_existente.valor
             comentario.usuario.reputacion += diferencia * 2
-
-            if comentario.usuario.reputacion < 0:
-                comentario.usuario.reputacion = 0
-
-            comentario.usuario.save()
-
             voto_existente.valor = valor
             voto_existente.save()
         else:
             VotoComentario.objects.create(usuario=request.user, comentario=comentario, valor=valor)
             comentario.usuario.reputacion += valor * 2
 
-            if comentario.usuario.reputacion < 0:
-                comentario.usuario.reputacion = 0
+        # Asegurar que la reputación no sea negativa
+        if comentario.usuario.reputacion < 0:
+            comentario.usuario.reputacion = 0
+        comentario.usuario.save()
 
-            comentario.usuario.save()
+        # Notificación si no es el autor votando su propio comentario
+        if request.user != comentario.usuario:
+            tipo = 'like' if valor == 1 else 'dislike'
+            Notificacion.objects.create(
+                destinatario=comentario.usuario,
+                emisor=request.user,
+                tipo=tipo,
+                mensaje=f"{request.user.username} ha dado un {tipo} a tu comentario en '{comentario.publicacion.titulo}'",
+                url=request.build_absolute_uri(comentario.publicacion.get_absolute_url())
+            )
 
-        return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
+        return redirect('detalle_publicacion', pk=pk)
 
     return redirect('login')
 
@@ -436,3 +480,85 @@ def editar_comentario(request, pk):
 
     # Redirige al detalle de la publicación usando reverse()
     return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
+
+#######################
+## VISTA NOTIFICACIONES
+######################
+#
+#def notificar_accion(request, pk):
+#    publicacion = get_object_or_404(Publicacion, pk=pk)
+#    
+#    # ----------------------------
+#    # LIKE o DISLIKE
+#    # ----------------------------
+#    valor = request.POST.get('valor')
+#    if valor  in ['1','-1']:
+#        tipo = 'like' if valor == '1' else 'dislike'
+#        if request.user != publicacion.usuario:
+#            Notificacion.objects.create(
+#                destinatario = publicacion.usuario,
+#                emisor = request.user,
+#                tipo = tipo,
+#                mensaje=f"{request.user.username} ha dado un {tipo} a tu publicación '{publicacion.titulo}'",
+#                url=request.build_absolute_uri(publicacion.get_absolute_url())
+#            )
+#        return redirect('detalle_publicacion', pk=pk)
+#    
+#    # ----------------------------
+#    # COMENTARIO NUEVO
+#    # ----------------------------
+#    
+#    contenido = request.POST.get('contenido')
+#    if contenido and not request.POST.get('comentario_padre_id'):
+#        comentario = Comentario.objects.create(
+#            publicacion=publicacion,
+#            usuario=request.user,
+#            contenido=contenido
+#        )
+#        if request.user != publicacion.autor:
+#            Notificacion.objects.create(
+#                destinatario=publicacion.autor,
+#                emisor=request.user,
+#                tipo='comentario',
+#                mensaje=f"{request.user.username} ha comentado en tu publicación '{publicacion.titulo}'",
+#                url=request.build_absolute_uri(publicacion.get_absolute_url())
+#            )
+#        return redirect('detalle_publicacion', pk=pk)
+#    
+#    # ----------------------------
+#    # RESPUESTA A COMENTARIO
+#    # ----------------------------
+#    comentario_padre_id = request.POST.get('comentario_padre_id')
+#    if contenido and comentario_padre_id:
+#        comentario_padre = get_object_or_404(Comentario, pk=comentario_padre_id)
+#        respuesta = Comentario.objects.create(
+#            publicacion=publicacion,
+#            usuario=request.user,
+#            contenido=contenido,
+#            comentario_padre=comentario_padre
+#        )
+#        if request.user != comentario_padre.usuario:
+#            Notificacion.objects.create(
+#                destinatario=comentario_padre.usuario,
+#                emisor=request.user,
+#                tipo='respuesta',
+#                mensaje=f"{request.user.username} ha respondido a tu comentario en '{publicacion.titulo}'",
+#                url=request.build_absolute_uri(publicacion.get_absolute_url())
+#            )
+#        return redirect('detalle_publicacion', pk=pk)
+#
+#    return redirect('detalle_publicacion', pk=pk)
+#
+#
+######################
+# VISTA VER NOTIFICACIONES
+#####################
+@login_required
+def ver_notificaciones(request):
+    notificaciones = request.user.notificaciones.order_by('-fecha')
+    cantidad_no_leidas = request.user.notificaciones.filter(leida=False).count()
+    notificaciones.update(leida=True)  # Opcional
+    return render(request, 'foro_aplicacion/notificaciones.html', {
+        'notificaciones': notificaciones,
+        'cantidad_no_leidas': cantidad_no_leidas
+    })

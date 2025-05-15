@@ -26,6 +26,22 @@
             {% endif %}
         </div>
         
+{% if user.is_authenticated %}
+    <a class="nav-link position-relative {% if cantidad_no_leidas > 0 %}fw-bold{% endif %}" href="{% url 'ver_notificaciones' %}">
+        <span class="{% if cantidad_no_leidas > 0 %}text-danger{% else %}text-dark{% endif %}">🔔</span>
+        {% if cantidad_no_leidas > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ cantidad_no_leidas }}
+                <span class="visually-hidden">notificaciones no leídas</span>
+            </span>
+        {% endif %}
+    </a>
+{% endif %}
+
+
+
+
+
         {% if user.is_authenticated %}
         <div class="nav-right">
             <form method="post" action="{% url 'logout' %}">

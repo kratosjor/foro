@@ -81,12 +81,12 @@
 
             {% if user.is_authenticated %}
             <div class="d-flex gap-2 align-items-center">
-                <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                <form method="post" action="{% url 'votar_comentario' comentario.id publicacion.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="valor" value="1">
                     <button type="submit" class="btn btn-outline-success btn-sm">👍</button>
                 </form>
-                <form method="post" action="{% url 'votar_comentario' comentario.id %}">
+                <form method="post" action="{% url 'votar_comentario' comentario.id publicacion.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="valor" value="-1">
                     <button type="submit" class="btn btn-outline-danger btn-sm">👎</button>
