@@ -163,6 +163,7 @@ class Notificacion(models.Model):
         ('dislike','Dislike a tu publicación'),
         ('comentario','Comentario en tu publicación'),
         ('respuesta','Respuesta a tu comentario'),
+        ('mencion','Mención en una publicación o comentario'),
         
     ]
     

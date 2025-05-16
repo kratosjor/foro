@@ -18,6 +18,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
+from foro_aplicacion.menciones import procesar_menciones
 
 
 def home(request):
@@ -189,7 +190,7 @@ class PublicacionDetailView(FormMixin, DetailView):
                     comentario.comentario_padre = padre
                     comentario.save()
 
-                    # Notificar al autor del comentario padre (respuesta)
+                    # 🔔 Notificar al autor del comentario padre (respuesta)
                     if padre.usuario != request.user:
                         Notificacion.objects.create(
                             destinatario=padre.usuario,
@@ -199,11 +200,11 @@ class PublicacionDetailView(FormMixin, DetailView):
                             url=request.build_absolute_uri(self.object.get_absolute_url())
                         )
                 except Comentario.DoesNotExist:
-                    comentario.save()  # guarda sin padre si hubo error
+                    comentario.save()
             else:
                 comentario.save()
 
-                # Notificar al autor de la publicación (nuevo comentario)
+                # 🔔 Notificar al autor de la publicación (nuevo comentario)
                 if self.object.usuario != request.user:
                     Notificacion.objects.create(
                         destinatario=self.object.usuario,
@@ -213,9 +214,22 @@ class PublicacionDetailView(FormMixin, DetailView):
                         url=request.build_absolute_uri(self.object.get_absolute_url())
                     )
 
+            # 🔔 Notificaciones por menciones
+            mencionados = procesar_menciones(comentario.contenido)
+            for usuario in mencionados:
+                if usuario != request.user and usuario != self.object.usuario:
+                    Notificacion.objects.create(
+                        destinatario=usuario,
+                        emisor=request.user,
+                        tipo='mencion',
+                        mensaje=f"{request.user.username} te mencionó en un comentario en '{self.object.titulo}'",
+                        url=request.build_absolute_uri(self.object.get_absolute_url()) + f"#comentario-{comentario.id}"
+                    )
+
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
+
 
 
 ######################
@@ -481,75 +495,7 @@ def editar_comentario(request, pk):
     # Redirige al detalle de la publicación usando reverse()
     return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
 
-#######################
-## VISTA NOTIFICACIONES
-######################
-#
-#def notificar_accion(request, pk):
-#    publicacion = get_object_or_404(Publicacion, pk=pk)
-#    
-#    # ----------------------------
-#    # LIKE o DISLIKE
-#    # ----------------------------
-#    valor = request.POST.get('valor')
-#    if valor  in ['1','-1']:
-#        tipo = 'like' if valor == '1' else 'dislike'
-#        if request.user != publicacion.usuario:
-#            Notificacion.objects.create(
-#                destinatario = publicacion.usuario,
-#                emisor = request.user,
-#                tipo = tipo,
-#                mensaje=f"{request.user.username} ha dado un {tipo} a tu publicación '{publicacion.titulo}'",
-#                url=request.build_absolute_uri(publicacion.get_absolute_url())
-#            )
-#        return redirect('detalle_publicacion', pk=pk)
-#    
-#    # ----------------------------
-#    # COMENTARIO NUEVO
-#    # ----------------------------
-#    
-#    contenido = request.POST.get('contenido')
-#    if contenido and not request.POST.get('comentario_padre_id'):
-#        comentario = Comentario.objects.create(
-#            publicacion=publicacion,
-#            usuario=request.user,
-#            contenido=contenido
-#        )
-#        if request.user != publicacion.autor:
-#            Notificacion.objects.create(
-#                destinatario=publicacion.autor,
-#                emisor=request.user,
-#                tipo='comentario',
-#                mensaje=f"{request.user.username} ha comentado en tu publicación '{publicacion.titulo}'",
-#                url=request.build_absolute_uri(publicacion.get_absolute_url())
-#            )
-#        return redirect('detalle_publicacion', pk=pk)
-#    
-#    # ----------------------------
-#    # RESPUESTA A COMENTARIO
-#    # ----------------------------
-#    comentario_padre_id = request.POST.get('comentario_padre_id')
-#    if contenido and comentario_padre_id:
-#        comentario_padre = get_object_or_404(Comentario, pk=comentario_padre_id)
-#        respuesta = Comentario.objects.create(
-#            publicacion=publicacion,
-#            usuario=request.user,
-#            contenido=contenido,
-#            comentario_padre=comentario_padre
-#        )
-#        if request.user != comentario_padre.usuario:
-#            Notificacion.objects.create(
-#                destinatario=comentario_padre.usuario,
-#                emisor=request.user,
-#                tipo='respuesta',
-#                mensaje=f"{request.user.username} ha respondido a tu comentario en '{publicacion.titulo}'",
-#                url=request.build_absolute_uri(publicacion.get_absolute_url())
-#            )
-#        return redirect('detalle_publicacion', pk=pk)
-#
-#    return redirect('detalle_publicacion', pk=pk)
-#
-#
+
 ######################
 # VISTA VER NOTIFICACIONES
 #####################
