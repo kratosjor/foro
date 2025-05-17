@@ -35,7 +35,7 @@ class CategoriaForm(forms.ModelForm):
 class PublicacionForm(forms.ModelForm):
     class Meta:
         model = Publicacion
-        fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen']
+        fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen','video']
     
     def clean_imagen(self):
         imagen = self.cleaned_data.get('imagen')

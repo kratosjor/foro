@@ -64,6 +64,7 @@ class Publicacion(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='publicaciones')
     etiquetas = models.ManyToManyField(Etiqueta, through='PublicacionEtiqueta', related_name='publicaciones')
     imagen = models.ImageField(upload_to='publicaciones/', blank=True, null=True)  # 👈 NUEVO CAMPO
+    video = models.URLField(blank=True, null=True)  # URL del video
 
     def __str__(self):
         return self.titulo

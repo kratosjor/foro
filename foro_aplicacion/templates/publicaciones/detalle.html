@@ -15,10 +15,24 @@
         <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
         <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
         <p class="fecha"><strong>Fecha:</strong> {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
+        <p class="etiqueta"><strong>Etiquetas:</strong>
+            {% for etiqueta in publicacion.etiquetas.all %}
+                {{ etiqueta.nombre }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                Sin etiquetas
+            {% endfor %}
+        </p>
         {% if publicacion.imagen %}
             <img src="{{ publicacion.imagen.url }}" alt="Imagen de la publicación"
                 style="max-width: 50%; height: auto; display: block; margin: 0 auto;">
         {% endif %}
+        {% if publicacion.video %}
+            <div class="video-embed" style="display: flex; justify-content: center; margin: 20px 0;">
+                <iframe width="560" height="315" src="{{ publicacion.video }}" frameborder="0" allowfullscreen></iframe>
+            </div>
+        {% endif %} 
+        
+
 
         {% if user.is_authenticated %}
         <div class="votos mt-3">

@@ -9,7 +9,7 @@
 <div class="container">
     <h1 class="titulo">Editar Publicación</h1>
 
-    <!-- Mostrar mensajes (por ejemplo: tamaño de imagen) -->
+    <!-- Mostrar mensajes -->
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -18,7 +18,7 @@
         </ul>
     {% endif %}
 
-    <!-- enctype es obligatorio para subir archivos -->
+    <!-- enctype es obligatorio para archivos -->
     <form method="post" enctype="multipart/form-data" class="formulario-publicacion">
         {% csrf_token %}
         
@@ -52,10 +52,15 @@
 
         <!-- Campo para subir imagen nueva -->
         <div class="form-group">
-            <label for="id_imagen">Imagen</label>
+            <label for="id_imagen">Nueva imagen (opcional)</label>
             {{ form.imagen }}
-            <!-- Previsualización de imagen nueva -->
             <div id="preview-container" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- Campo para URL del video -->
+        <div class="form-group">
+            <label for="id_video">Enlace del video (opcional)</label>
+            {{ form.video }}
         </div>
 
         <button type="submit" class="btn btn-primary">Editar Publicación</button>

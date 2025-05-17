@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from foro_aplicacion.menciones import procesar_menciones
+import re
 
 
 def home(request):
@@ -126,31 +127,56 @@ def publicaciones_por_categoria(request, categoria_id):
     return render(request, 'publicaciones/listar_por_categoria.html', {'publicaciones': publicaciones})
 
 ######################
+# VISTA EMBEBIDO DE YOUTUBE
+######################
+
+def convertir_link_embebido(url):
+    """
+    Convierte un enlace de YouTube al formato embebido.
+    """
+    match = re.match(r'https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)', url)
+    if match:
+        video_id = match.group(1)
+        return f'https://www.youtube.com/embed/{video_id}'
+    
+    match = re.match(r'https?://youtu\.be/([a-zA-Z0-9_-]+)', url)
+    if match:
+        video_id = match.group(1)
+        return f'https://www.youtube.com/embed/{video_id}'
+
+    return url  # Si no es un enlace válido de YouTube
+
+
+######################
 # VISTA crear publicacion
 ######################
 
 class PublicacionCreateView(LoginRequiredMixin, CreateView):
     model = Publicacion
-    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas', 'imagen']  # incluye imagen
+    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas', 'imagen', 'video']
     template_name = 'publicaciones/crear.html'
     success_url = reverse_lazy('listar_publicaciones')
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user
-        
-        # Validar tamaño de imagen si se cargó una
+
+        # Convertir video de YouTube a formato embebido
+        video_url = form.cleaned_data.get('video')
+        if video_url:
+            form.instance.video = convertir_link_embebido(video_url)
+
+        # Validar tamaño de imagen si se carga
         imagen = form.cleaned_data.get('imagen')
         if imagen:
             size = imagen.size
-            if size < 300 * 1024:  # menor a 300KB
+            if size < 300 * 1024:
                 tamano = 'Pequeña'
-            elif 300 * 1024 <= size < 1024 * 1024:  # entre 300KB y 1MB
+            elif 300 * 1024 <= size < 1024 * 1024:
                 tamano = 'Media'
-            else:  # mayor a 1MB
+            else:
                 tamano = 'Grande'
-
             messages.info(self.request, f"Imagen detectada: tamaño {tamano.lower()}.")
-        
+
         messages.success(self.request, "¡Publicación creada exitosamente!")
         return super().form_valid(form)
 
@@ -294,26 +320,30 @@ class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
 class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Publicacion
     template_name = 'publicaciones/editar_publicacion.html'
-    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen']
+    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen','video']
     def get_success_url(self):
         return reverse_lazy('detalle_publicacion', kwargs={'pk': self.object.pk})
     
     def form_valid(self, form):
         form.instance.usuario = self.request.user
-        
-        # Validar tamaño de imagen si se cargó una
+
+        # Convertir video de YouTube a formato embebido
+        video_url = form.cleaned_data.get('video')
+        if video_url:
+            form.instance.video = convertir_link_embebido(video_url)
+
+        # Validar tamaño de imagen si se carga
         imagen = form.cleaned_data.get('imagen')
         if imagen:
             size = imagen.size
-            if size < 300 * 1024:  # menor a 300KB
+            if size < 300 * 1024:
                 tamano = 'Pequeña'
-            elif 300 * 1024 <= size < 1024 * 1024:  # entre 300KB y 1MB
+            elif 300 * 1024 <= size < 1024 * 1024:
                 tamano = 'Media'
-            else:  # mayor a 1MB
+            else:
                 tamano = 'Grande'
-
             messages.info(self.request, f"Imagen detectada: tamaño {tamano.lower()}.")
-        
+
         messages.success(self.request, "¡Publicación creada exitosamente!")
         return super().form_valid(form)
 
