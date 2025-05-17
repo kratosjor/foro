@@ -35,7 +35,27 @@ class CategoriaForm(forms.ModelForm):
 class PublicacionForm(forms.ModelForm):
     class Meta:
         model = Publicacion
-        fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas']
+        fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen']
+    
+    def clean_imagen(self):
+        imagen = self.cleaned_data.get('imagen')
+
+        if imagen:
+            max_tamano = 10 * 1024 * 1024  # 10 MB
+            tamano = imagen.size
+
+            if tamano > max_tamano:
+                raise forms.ValidationError("La imagen es demasiado grande. El tamaño máximo permitido es 10 MB.")
+
+            # Puedes agregar etiquetas si quieres mostrar el tipo
+            if tamano <= 1 * 1024 * 1024:
+                self.tamano_imagen = 'Pequeña'
+            elif tamano <= 5 * 1024 * 1024:
+                self.tamano_imagen = 'Mediana'
+            else:
+                self.tamano_imagen = 'Grande'
+
+        return imagen
 
 ######################
 # Comentario

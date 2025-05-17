@@ -63,6 +63,7 @@ class Publicacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='publicaciones')
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='publicaciones')
     etiquetas = models.ManyToManyField(Etiqueta, through='PublicacionEtiqueta', related_name='publicaciones')
+    imagen = models.ImageField(upload_to='publicaciones/', blank=True, null=True)  # 👈 NUEVO CAMPO
 
     def __str__(self):
         return self.titulo

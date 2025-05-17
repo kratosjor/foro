@@ -2,32 +2,87 @@
 {% load static %}
 
 {% block title_page %}
-    <title>Editar Publicación | Foro</title>
+    <title>Editar | Foro</title>
 {% endblock %}
 
 {% block body %}
 <div class="container">
-    <h1 class="titulo">Editar Nueva Publicación</h1>
-    <form method="post" class="formulario-publicacion">
+    <h1 class="titulo">Editar Publicación</h1>
+
+    <!-- Mostrar mensajes (por ejemplo: tamaño de imagen) -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- enctype es obligatorio para subir archivos -->
+    <form method="post" enctype="multipart/form-data" class="formulario-publicacion">
         {% csrf_token %}
+        
         <div class="form-group">
             <label for="id_titulo">Título</label>
             {{ form.titulo }}
         </div>
+
         <div class="form-group">
             <label for="id_cuerpo">Cuerpo</label>
             {{ form.cuerpo }}
         </div>
+
         <div class="form-group">
             <label for="id_categoria">Categoría</label>
             {{ form.categoria }}
         </div>
+
         <div class="form-group">
             <label for="id_etiquetas">Etiquetas</label>
             {{ form.etiquetas }}
         </div>
-        
-        <button type="submit" class="btn btn-primary">Guardar Publicación</button>
+
+        <!-- Mostrar imagen actual si existe -->
+        {% if form.instance.imagen %}
+        <div class="form-group">
+            <p><strong>Imagen actual:</strong></p>
+            <img src="{{ form.instance.imagen.url }}" alt="Imagen actual" style="max-width: 50%; height: auto; border: 1px solid #ccc; margin-bottom: 10px;">
+        </div>
+        {% endif %}
+
+        <!-- Campo para subir imagen nueva -->
+        <div class="form-group">
+            <label for="id_imagen">Imagen</label>
+            {{ form.imagen }}
+            <!-- Previsualización de imagen nueva -->
+            <div id="preview-container" style="margin-top: 10px;"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Editar Publicación</button>
     </form>
 </div>
+
+<!-- JS para previsualización de imagen -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputImagen = document.querySelector('input[type="file"][name="imagen"]');
+    const previewContainer = document.getElementById("preview-container");
+
+    inputImagen?.addEventListener("change", function () {
+        const archivo = inputImagen.files[0];
+        if (archivo) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewContainer.innerHTML = `
+                    <p><strong>Nueva imagen seleccionada:</strong></p>
+                    <img src="${e.target.result}" style="max-width: 50%; height: auto; border: 1px solid #ccc;">
+                `;
+            };
+            reader.readAsDataURL(archivo);
+        } else {
+            previewContainer.innerHTML = "";
+        }
+    });
+});
+</script>
 {% endblock %}

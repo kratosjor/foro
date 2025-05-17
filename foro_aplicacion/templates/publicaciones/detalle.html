@@ -15,6 +15,10 @@
         <p class="categoria"><strong>Categoría:</strong> {{ publicacion.categoria.nombre }}</p>
         <p class="autor"><strong>Publicado por:</strong> {{ publicacion.usuario.username }}</p>
         <p class="fecha"><strong>Fecha:</strong> {{ publicacion.fecha_creacion|date:"d M Y" }}</p>
+        {% if publicacion.imagen %}
+            <img src="{{ publicacion.imagen.url }}" alt="Imagen de la publicación"
+                style="max-width: 50%; height: auto; display: block; margin: 0 auto;">
+        {% endif %}
 
         {% if user.is_authenticated %}
         <div class="votos mt-3">
@@ -34,6 +38,14 @@
             <p class="mt-2">Inicia sesión para votar.</p>
         {% endif %}
     </div>
+    {% if user.es_admin or user == publicacion.usuario %}
+        <div class="text-end mt-3">
+            <form method="post" action="{% url 'eliminar_publicacion' publicacion.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar Publicación</button>
+            </form>
+        </div>
+        {% endif %}
 
     {% if user.is_authenticated and user == publicacion.usuario %}
     <div class="text-end mt-3">
@@ -68,6 +80,8 @@
         {% else %}
             <p class="info-login">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
         {% endif %}
+
+        
 
     <div class="lista-comentarios mt-4">
     {% for comentario in comentarios %}

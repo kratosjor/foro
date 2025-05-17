@@ -124,7 +124,35 @@ class PublicacionListView(ListView):
 def publicaciones_por_categoria(request, categoria_id):
     publicaciones = Publicacion.objects.filter(categoria_id=categoria_id)
     return render(request, 'publicaciones/listar_por_categoria.html', {'publicaciones': publicaciones})
-    
+
+######################
+# VISTA crear publicacion
+######################
+
+class PublicacionCreateView(LoginRequiredMixin, CreateView):
+    model = Publicacion
+    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas', 'imagen']  # incluye imagen
+    template_name = 'publicaciones/crear.html'
+    success_url = reverse_lazy('listar_publicaciones')
+
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        
+        # Validar tamaño de imagen si se cargó una
+        imagen = form.cleaned_data.get('imagen')
+        if imagen:
+            size = imagen.size
+            if size < 300 * 1024:  # menor a 300KB
+                tamano = 'Pequeña'
+            elif 300 * 1024 <= size < 1024 * 1024:  # entre 300KB y 1MB
+                tamano = 'Media'
+            else:  # mayor a 1MB
+                tamano = 'Grande'
+
+            messages.info(self.request, f"Imagen detectada: tamaño {tamano.lower()}.")
+        
+        messages.success(self.request, "¡Publicación creada exitosamente!")
+        return super().form_valid(form)
 
 ######################
 # VISTA detalle PUBLICACION
@@ -244,20 +272,7 @@ class EliminarComentarioView(LoginRequiredMixin, DeleteView):
         return reverse('detalle_publicacion', kwargs={'pk': self.object.pk})
 
 
-######################
-# VISTA crear publicacion
-######################
 
-class PublicacionCreateView(LoginRequiredMixin, CreateView):
-    model = Publicacion
-    fields = ['titulo','cuerpo','categoria','etiquetas']
-    template_name = 'publicaciones/crear.html'
-    success_url = reverse_lazy('listar_publicaciones')
-    
-        
-    def form_valid(self, form):
-        form.instance.usuario = self.request.user
-        return super().form_valid(form)
 
 ######################
 # VISTA ELIMINAR PUBLICACION
@@ -279,9 +294,28 @@ class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
 class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Publicacion
     template_name = 'publicaciones/editar_publicacion.html'
-    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas']
+    fields = ['titulo', 'cuerpo', 'categoria', 'etiquetas','imagen']
     def get_success_url(self):
         return reverse_lazy('detalle_publicacion', kwargs={'pk': self.object.pk})
+    
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        
+        # Validar tamaño de imagen si se cargó una
+        imagen = form.cleaned_data.get('imagen')
+        if imagen:
+            size = imagen.size
+            if size < 300 * 1024:  # menor a 300KB
+                tamano = 'Pequeña'
+            elif 300 * 1024 <= size < 1024 * 1024:  # entre 300KB y 1MB
+                tamano = 'Media'
+            else:  # mayor a 1MB
+                tamano = 'Grande'
+
+            messages.info(self.request, f"Imagen detectada: tamaño {tamano.lower()}.")
+        
+        messages.success(self.request, "¡Publicación creada exitosamente!")
+        return super().form_valid(form)
 
 
 ######################
