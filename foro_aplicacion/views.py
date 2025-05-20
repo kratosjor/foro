@@ -179,6 +179,18 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
 
         messages.success(self.request, "¡Publicación creada exitosamente!")
         return super().form_valid(form)
+    
+######################
+# VISTA procesar menciones
+######################
+
+def procesar_menciones(texto):
+    """
+    Extrae menciones en el formato @username y retorna instancias de Usuario.
+    """
+    menciones = re.findall(r'@(\w+)', texto)
+    usuarios = Usuario.objects.filter(username__in=menciones)
+    return list(usuarios)
 
 ######################
 # VISTA detalle PUBLICACION
@@ -237,6 +249,8 @@ class PublicacionDetailView(FormMixin, DetailView):
             comentario.usuario = request.user
             comentario.publicacion = self.object
 
+            usuarios_notificados = set()
+
             padre_id = request.POST.get('comentario_padre_id')
             if padre_id:
                 try:
@@ -244,7 +258,7 @@ class PublicacionDetailView(FormMixin, DetailView):
                     comentario.comentario_padre = padre
                     comentario.save()
 
-                    # 🔔 Notificar al autor del comentario padre (respuesta)
+                    # 🔔 Notificar al autor del comentario padre
                     if padre.usuario != request.user:
                         Notificacion.objects.create(
                             destinatario=padre.usuario,
@@ -253,12 +267,13 @@ class PublicacionDetailView(FormMixin, DetailView):
                             mensaje=f"{request.user.username} respondió a tu comentario en '{self.object.titulo}'",
                             url=request.build_absolute_uri(self.object.get_absolute_url())
                         )
+                        usuarios_notificados.add(padre.usuario)
                 except Comentario.DoesNotExist:
                     comentario.save()
             else:
                 comentario.save()
 
-                # 🔔 Notificar al autor de la publicación (nuevo comentario)
+                # 🔔 Notificar al autor de la publicación
                 if self.object.usuario != request.user:
                     Notificacion.objects.create(
                         destinatario=self.object.usuario,
@@ -267,11 +282,12 @@ class PublicacionDetailView(FormMixin, DetailView):
                         mensaje=f"{request.user.username} comentó en tu publicación '{self.object.titulo}'",
                         url=request.build_absolute_uri(self.object.get_absolute_url())
                     )
+                    usuarios_notificados.add(self.object.usuario)
 
-            # 🔔 Notificaciones por menciones
+            # 🔔 Menciones
             mencionados = procesar_menciones(comentario.contenido)
             for usuario in mencionados:
-                if usuario != request.user and usuario != self.object.usuario:
+                if usuario != request.user and usuario not in usuarios_notificados:
                     Notificacion.objects.create(
                         destinatario=usuario,
                         emisor=request.user,
@@ -279,11 +295,11 @@ class PublicacionDetailView(FormMixin, DetailView):
                         mensaje=f"{request.user.username} te mencionó en un comentario en '{self.object.titulo}'",
                         url=request.build_absolute_uri(self.object.get_absolute_url()) + f"#comentario-{comentario.id}"
                     )
+                    usuarios_notificados.add(usuario)
 
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
-
 
 
 ######################
